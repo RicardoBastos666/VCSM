@@ -15,6 +15,7 @@ namespace VCSM
             InitializeComponent();
             InitializeDropdowns();
             InitializeDataGridView();
+            InitializeWidthNumericUpDown();
             // Set the form size to 1280x720
             this.Size = new Size(1280, 720);
 
@@ -22,6 +23,21 @@ namespace VCSM
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
         }
 
+        private void InitializeWidthNumericUpDown()
+        {
+            // Assuming you have a NumericUpDown control named numericUpDownWidth
+            // Set the minimum and maximum values for the width
+            numericUpDownLength.Minimum = 2299;  // Adjust this based on your minimum allowed width
+            numericUpDownLength.Maximum = 2743;  // Adjust this based on your maximum allowed width
+            numericUpDownWidth.Maximum = 2300;
+            numericUpDownWidth.Minimum = 0;
+            // Set the default value or adjust the increment based on your requirements
+            numericUpDownWidth.Value = 2299;  // Default value
+            numericUpDownWidth.Increment = 1;  // Increment value
+
+            // Optionally, handle the ValueChanged event to perform additional actions when the value changes
+            numericUpDownWidth.ValueChanged += numericUpDownWidth_ValueChanged;
+        }
         private void InitializeDropdowns()
         {
             // Populate the Product dropdown
@@ -74,6 +90,8 @@ namespace VCSM
             dataGridViewCargo.AutoGenerateColumns = false;
             dataGridViewCargo.AllowUserToAddRows = false;
         }
+
+
 
         private void UpdateThicknessDropdown()
         {
@@ -158,8 +176,8 @@ namespace VCSM
             string selectedProduct = cmbProduct.SelectedItem.ToString();
             int selectedThickness = Convert.ToInt32(cmbThickness.SelectedItem);
             int selectedQuantity = Convert.ToInt32(txtQuantity.Text);
-            int selectedWidth = Convert.ToInt32(txtWidth.Text);
-            int selectedLength = Convert.ToInt32(txtLength.Text);
+            int selectedWidth = Convert.ToInt32(numericUpDownWidth.Text);
+            int selectedLength = Convert.ToInt32(numericUpDownLength.Text);
 
             // Create a new CargoItem
             CargoItem newCargoItem = new CargoItem
@@ -203,6 +221,20 @@ namespace VCSM
                     cargoItem.MaxWeightPerPallet
                 );
             }
+        }
+
+        private void numericUpDownWidth_ValueChanged(object sender, EventArgs e)
+        {
+            // Example: Display a message if the width exceeds a certain threshold
+            if (numericUpDownWidth.Value > 5000)
+            {
+                MessageBox.Show("Warning: The width is quite large. Are you sure?");
+            }
+        }
+
+        private void numericUpDownLenght_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
