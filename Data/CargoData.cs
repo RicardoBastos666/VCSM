@@ -23,16 +23,16 @@ namespace VCSM.Data
 
         public static Dictionary<string, double> RegionWeightLimits { get; } = new Dictionary<string, double>
         {
-            {"Region1", 10000.0},
-            {"Region2", 20000.0},
-            {"Region3", 30000.0},
-            {"Region4", 40000.0},
-            {"Region5", 50000.0},
-            {"Region6", 60000.0},
-            {"Region7", 70000.0},
-            {"Region8", 80000.0},
-            {"Region9", 90000.0},
-            {"Region10", 100000.0},
+            {"Florida", 26000},
+            {"Texas", 23400},
+            {"Illinois", 25500},
+            {"Brooklyn", 23400},
+            {"New Jersey", 23400},
+            {"Virginia", 23400},
+            {"Massachussets", 23500},
+            {"Maryland", 23500},
+            {"North Carolina", 25000},
+            {"Pennsylvania", 25600},
         };
     }
 }
