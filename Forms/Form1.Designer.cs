@@ -146,6 +146,7 @@
             this.txtQuantity.Name = "txtQuantity";
             this.txtQuantity.Size = new System.Drawing.Size(178, 26);
             this.txtQuantity.TabIndex = 16;
+            this.txtQuantity.TextChanged += new System.EventHandler(this.txtQuantity_TextChanged);
             // 
             // lblWarning
             // 
@@ -188,7 +189,7 @@
             this.numericUpDownWidth.Name = "numericUpDownWidth";
             this.numericUpDownWidth.Size = new System.Drawing.Size(180, 26);
             this.numericUpDownWidth.TabIndex = 20;
-            this.numericUpDownWidth.ValueChanged += new System.EventHandler(this.numericUpDownWidth_ValueChanged);
+            this.numericUpDownWidth.ValueChanged += new System.EventHandler(this.numericUpDownLength_ValueChanged);
             // 
             // numericUpDownLength
             // 

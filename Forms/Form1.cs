@@ -9,35 +9,35 @@ namespace VCSM
     public partial class Form1 : Form
     {
         private List<CargoItem> CargoList = new List<CargoItem>();
-
+        private bool userInteractedWithQuantity = false;
         public Form1()
         {
             InitializeComponent();
             InitializeDropdowns();
             InitializeDataGridView();
             InitializeWidthNumericUpDown();
-            // Set the form size to 1280x720
-            this.Size = new Size(1280, 720);
+            this.Size = new Size(1280, 720); // Set the form size to 1280x720
 
             // Prevent resizing
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            // Set the initial state of the warning label
+            lblWarning.Text = "";
+            // Hook up TextChanged event for txtQuantity
+            txtQuantity.TextChanged += (sender, e) => UpdateQuantity();
         }
 
         private void InitializeWidthNumericUpDown()
         {
-            // Assuming you have a NumericUpDown control named numericUpDownWidth
             // Set the minimum and maximum values for the width
-            numericUpDownLength.Minimum = 2299;  // Adjust this based on your minimum allowed width
-            numericUpDownLength.Maximum = 2743;  // Adjust this based on your maximum allowed width
-            numericUpDownWidth.Maximum = 2300;
+            numericUpDownLength.Minimum = 0;  // Adjust this based on your minimum allowed length
+            numericUpDownLength.Maximum = 2743;  // Adjust this based on your maximum allowed length
             numericUpDownWidth.Minimum = 0;
-            // Set the default value or adjust the increment based on your requirements
-            numericUpDownWidth.Value = 2299;  // Default value
+            numericUpDownWidth.Maximum = 1000;  // Adjust this based on your maximum allowed width
+                                                // Set the default value or adjust the increment based on your requirements
+            numericUpDownWidth.Value = 0;  // Default value
             numericUpDownWidth.Increment = 1;  // Increment value
-
-            // Optionally, handle the ValueChanged event to perform additional actions when the value changes
-            numericUpDownWidth.ValueChanged += numericUpDownWidth_ValueChanged;
         }
+
         private void InitializeDropdowns()
         {
             // Populate the Product dropdown
@@ -61,6 +61,7 @@ namespace VCSM
             // Set default selected index for Region (optional)
             cmbRegion.SelectedIndex = 0;
         }
+
         private void InitializeDataGridView()
         {
             // Define columns for the DataGridView
@@ -91,8 +92,6 @@ namespace VCSM
             dataGridViewCargo.AllowUserToAddRows = false;
         }
 
-
-
         private void UpdateThicknessDropdown()
         {
             // Clear previous items
@@ -122,37 +121,32 @@ namespace VCSM
             // Get the selected thickness
             int selectedThickness = Convert.ToInt32(cmbThickness.SelectedItem);
 
+            // Check if the user has interacted with the Quantity control
+            if (!userInteractedWithQuantity)
+                return;
+
             // Get the entered quantity from the TextBox
             if (!int.TryParse(txtQuantity.Text, out int selectedQuantity) || selectedQuantity <= 0)
             {
                 // Display an error message if the input is not a valid positive integer
-                lblWarning.Text = "Please enter a valid positive integer for the quantity.";
+                lblWarning.Text = "Please enter a valid positive number for the quantity.";
+                lblWarning.ForeColor = Color.Red; // Set the text color to red
                 return;
             }
 
-            // Set the maximum quantity based on thickness
-            int maxQuantity = (selectedThickness == 35) ? 28 : 21;
+            // Set the maximum quantity per pallet based on thickness
+            int maxQuantityPerPallet = GetMaxQuantityPerPallet();
 
-            // Display a warning if the entered quantity is not a multiple of the allowed quantity
-            if (selectedQuantity % maxQuantity != 0)
+            // Display a warning if the entered quantity is not a multiple of the allowed quantity per pallet
+            if (selectedQuantity % maxQuantityPerPallet != 0)
             {
-                lblWarning.Text = $"Warning: Quantity must be a multiple of {maxQuantity}.";
+                lblWarning.Text = $"Warning: Quantity must be a multiple of {maxQuantityPerPallet}.";
+                lblWarning.ForeColor = Color.Red; // Set the text color to red
             }
             else
             {
                 lblWarning.Text = ""; // Clear the warning if the quantity is valid
             }
-        }
-
-        private void cmbThickness_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Update quantity when the selected thickness changes
-            UpdateQuantity();
-        }
-
-        private void btnCalculate_Click(object sender, EventArgs e)
-        {
-
         }
 
         private int GetMaxQuantityPerPallet()
@@ -164,20 +158,33 @@ namespace VCSM
             return (selectedThickness == 35) ? 28 : 21;
         }
 
-        private void cmbProduct_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbThickness_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Update Thickness dropdown when the selected product changes
-            UpdateThicknessDropdown();
+            // Update quantity when the selected thickness changes
+            UpdateQuantity();
         }
 
         private void btnCalculate_Click_1(object sender, EventArgs e)
         {
+
+            // Validate input
+            if (string.IsNullOrEmpty(cmbProduct.Text) ||
+                string.IsNullOrEmpty(cmbThickness.Text) ||
+                string.IsNullOrEmpty(txtQuantity.Text) ||
+                string.IsNullOrEmpty(numericUpDownWidth.Text) ||
+                string.IsNullOrEmpty(numericUpDownLength.Text))
+            {
+                lblWarning.Text = "Please fill in all required fields.";
+                return;
+            }
+
             // Get user input
             string selectedProduct = cmbProduct.SelectedItem.ToString();
             int selectedThickness = Convert.ToInt32(cmbThickness.SelectedItem);
             int selectedQuantity = Convert.ToInt32(txtQuantity.Text);
             int selectedWidth = Convert.ToInt32(numericUpDownWidth.Text);
             int selectedLength = Convert.ToInt32(numericUpDownLength.Text);
+
 
             // Create a new CargoItem
             CargoItem newCargoItem = new CargoItem
@@ -194,6 +201,12 @@ namespace VCSM
 
             // Display the updated cargo list in the DataGridView
             DisplayCargoInDataGridView();
+        }
+
+        private void cmbProduct_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Update Thickness dropdown when the selected product changes
+            UpdateThicknessDropdown();
         }
 
         private void DisplayCargoInDataGridView()
@@ -223,10 +236,10 @@ namespace VCSM
             }
         }
 
-        private void numericUpDownWidth_ValueChanged(object sender, EventArgs e)
+        private void numericUpDownLength_ValueChanged(object sender, EventArgs e)
         {
             // Example: Display a message if the width exceeds a certain threshold
-            if (numericUpDownWidth.Value > 5000)
+            if (numericUpDownWidth.Value > numericUpDownLength.Value)
             {
                 MessageBox.Show("Warning: The width is quite large. Are you sure?");
             }
@@ -235,6 +248,12 @@ namespace VCSM
         private void numericUpDownLenght_ValueChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void txtQuantity_TextChanged(object sender, EventArgs e)
+        {
+            // Set the flag indicating that the user has interacted with Quantity
+            userInteractedWithQuantity = true;
         }
     }
 }
