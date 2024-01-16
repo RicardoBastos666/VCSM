@@ -20,7 +20,21 @@ namespace VCSM.Data
         public int ExtraWidth { get; set; }
         public double WeightPerSquareMeter { get; set; }
         public double TotalVolume { get; set; }
-        public double TotalWeight { get; set; }
+        //public double TotalWeight { get; set; }
         public double MaxWeightPerPallet { get; set; }
+        public double WeightPerLine => Quantity * WeightPerSquareMeter * Width * Length / 1_000_000;  // Assuming the dimensions are in millimeters
+
+        public double TotalWeight
+        {
+            get
+            {
+                // Calculate the total weight based on your logic
+                double weightPerSquareMeter = Data.CargoData.MaterialWeights[Product].WeightPerSquareMeter;
+                double thicknessWeight = Data.CargoData.MaterialWeights[Product].ThicknessWeights[Thickness];
+                double totalArea = Width * Length * Quantity / 1_000_000.0; // Convert to square meters
+
+                return totalArea * weightPerSquareMeter + thicknessWeight * Quantity;
+            }
+        }
     }
 }

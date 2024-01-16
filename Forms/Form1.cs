@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using VCSM.Data;
 
@@ -28,14 +29,18 @@ namespace VCSM
 
         private void InitializeWidthNumericUpDown()
         {
+            // NumericUpDown control numericUpDownWidth
             // Set the minimum and maximum values for the width
             numericUpDownLength.Minimum = 0;  // Adjust this based on your minimum allowed length
-            numericUpDownLength.Maximum = 2743;  // Adjust this based on your maximum allowed length
+            numericUpDownLength.Maximum = 9999;  // Remove or comment out this line to remove the maximum restriction
             numericUpDownWidth.Minimum = 0;
-            numericUpDownWidth.Maximum = 1000;  // Adjust this based on your maximum allowed width
-                                                // Set the default value or adjust the increment based on your requirements
-            numericUpDownWidth.Value = 0;  // Default value
+            numericUpDownWidth.Maximum = 9999;  // Remove or comment out this line to remove the maximum restriction
+            // Set the default value or adjust the increment based on your requirements
+            // numericUpDownWidth.Value = 0;  // Default value
             numericUpDownWidth.Increment = 1;  // Increment value
+                                               // Optionally, handle the ValueChanged event to perform additional actions when the value changes
+                                               // numericUpDownWidth.ValueChanged += numericUpDownLength_ValueChanged;
+                                               // numericUpDownLength.ValueChanged += numericUpDownLength_ValueChanged;
         }
 
         private void InitializeDropdowns()
@@ -60,6 +65,9 @@ namespace VCSM
 
             // Set default selected index for Region (optional)
             cmbRegion.SelectedIndex = 0;
+
+            cmbThickness.SelectedIndexChanged += CmbThickness_SelectedIndexChanged;
+
         }
 
         private void InitializeDataGridView()
@@ -78,16 +86,18 @@ namespace VCSM
             dataGridViewCargo.Columns.Add("WeightPerSquareMeter", "Weight (Kg/m2)");
             dataGridViewCargo.Columns.Add("TotalVolume", "Total Volume (m3)");
             dataGridViewCargo.Columns.Add("TotalWeight", "Total Weight (KG)");
+            //add efective lenght, width and pallet number
 
             // Set DataGridView properties
             dataGridViewCargo.Columns["Region"].Visible = false;
             dataGridViewCargo.Columns["MaxLength"].Visible = false;
             dataGridViewCargo.Columns["QuantityPerPallet"].Visible = false;
             dataGridViewCargo.Columns["ExtraWidth"].Visible = false;
-            dataGridViewCargo.Columns["TotalWeight"].Visible = false;
+            dataGridViewCargo.Columns["TotalWeight"].Visible = true;
             dataGridViewCargo.Columns["TotalVolume"].Visible = false;
             dataGridViewCargo.Columns["MaxLength"].Visible = false;
             dataGridViewCargo.Columns["WeightPerSquareMeter"].Visible = false;
+            dataGridViewCargo.Columns["MaxWeight"].Visible = false;
             dataGridViewCargo.AutoGenerateColumns = false;
             dataGridViewCargo.AllowUserToAddRows = false;
         }
@@ -109,7 +119,7 @@ namespace VCSM
                 }
 
                 // Set default selected index (optional)
-                cmbThickness.SelectedIndex = 0;
+                //cmbThickness.SelectedIndex = 0;
 
                 // Update quantity based on thickness
                 UpdateQuantity();
@@ -121,16 +131,10 @@ namespace VCSM
             // Get the selected thickness
             int selectedThickness = Convert.ToInt32(cmbThickness.SelectedItem);
 
-            // Check if the user has interacted with the Quantity control
-            if (!userInteractedWithQuantity)
-                return;
-
             // Get the entered quantity from the TextBox
-            if (!int.TryParse(txtQuantity.Text, out int selectedQuantity) || selectedQuantity <= 0)
+            if (!int.TryParse(txtQuantity.Text, out int selectedQuantity))
             {
-                // Display an error message if the input is not a valid positive integer
-                lblWarning.Text = "Please enter a valid positive number for the quantity.";
-                lblWarning.ForeColor = Color.Red; // Set the text color to red
+                lblWarning.Text = ""; // Clear any previous warnings
                 return;
             }
 
@@ -138,9 +142,9 @@ namespace VCSM
             int maxQuantityPerPallet = GetMaxQuantityPerPallet();
 
             // Display a warning if the entered quantity is not a multiple of the allowed quantity per pallet
-            if (selectedQuantity % maxQuantityPerPallet != 0)
+            if (selectedQuantity <= 0 || selectedQuantity % maxQuantityPerPallet != 0)
             {
-                lblWarning.Text = $"Warning: Quantity must be a multiple of {maxQuantityPerPallet}.";
+                lblWarning.Text = $"Warning: Quantity must be a positive multiple of {maxQuantityPerPallet}.";
                 lblWarning.ForeColor = Color.Red; // Set the text color to red
             }
             else
@@ -148,6 +152,7 @@ namespace VCSM
                 lblWarning.Text = ""; // Clear the warning if the quantity is valid
             }
         }
+
 
         private int GetMaxQuantityPerPallet()
         {
@@ -158,15 +163,16 @@ namespace VCSM
             return (selectedThickness == 35) ? 28 : 21;
         }
 
-        private void cmbThickness_SelectedIndexChanged(object sender, EventArgs e)
+        private void CmbThickness_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // Clear the QTY field when thickness changes
+            txtQuantity.Clear();
             // Update quantity when the selected thickness changes
             UpdateQuantity();
         }
 
         private void btnCalculate_Click_1(object sender, EventArgs e)
         {
-
             // Validate input
             if (string.IsNullOrEmpty(cmbProduct.Text) ||
                 string.IsNullOrEmpty(cmbThickness.Text) ||
@@ -185,6 +191,27 @@ namespace VCSM
             int selectedWidth = Convert.ToInt32(numericUpDownWidth.Text);
             int selectedLength = Convert.ToInt32(numericUpDownLength.Text);
 
+            // Check if the quantity is a multiple of 21 or 28
+            int maxQuantityPerPallet = GetMaxQuantityPerPallet();
+            if (selectedQuantity % maxQuantityPerPallet != 0)
+            {
+                lblWarning.Text = $"Warning: Quantity must be a multiple of {maxQuantityPerPallet}.";
+                return; // Do not proceed with adding to cargo
+            }
+
+            // Calculate the total weight of all items in the CargoList
+            double totalWeight = CargoList.Sum(item => item.TotalWeight);
+
+            // Get the maximum weight for the selected region
+            string selectedRegion = cmbRegion.SelectedItem.ToString();
+            double maxRegionWeight = Data.CargoData.RegionWeightLimits[selectedRegion];
+
+            // Check if adding the new item will exceed the maximum weight for the region
+            if (totalWeight + CalculateItemWeight(selectedProduct, selectedThickness, selectedQuantity, selectedWidth, selectedLength) > maxRegionWeight)
+            {
+                lblWarning.Text = $"Warning: Adding this item will exceed the maximum weight limit for the region ({maxRegionWeight} kg).";
+                return; // Do not proceed with adding to cargo
+            }
 
             // Create a new CargoItem
             CargoItem newCargoItem = new CargoItem
@@ -201,6 +228,32 @@ namespace VCSM
 
             // Display the updated cargo list in the DataGridView
             DisplayCargoInDataGridView();
+
+            // Clear all fields after adding to cargo
+            ClearAllFields();
+        }
+
+
+        // method to calculate the weight of a single item
+        private double CalculateItemWeight(string product, int thickness, int quantity, int width, int length)
+        {
+            // material properties and dimensions to calculate the weight
+            double weightPerSquareMeter = Data.CargoData.MaterialWeights[product].WeightPerSquareMeter;
+            double thicknessWeight = Data.CargoData.MaterialWeights[product].ThicknessWeights[thickness];
+            double totalArea = (width / 100.0) * (length / 100.0) * quantity; // Convert width and length to meters
+            double itemWeight = totalArea * weightPerSquareMeter + thicknessWeight * quantity;
+            return itemWeight;
+        }
+
+
+        private void ClearAllFields()
+        {
+            cmbProduct.SelectedIndex = 0;
+            cmbThickness.SelectedIndex = 0;
+            txtQuantity.Clear();
+            numericUpDownWidth.Value = 0;
+            numericUpDownLength.Value = 0;
+            // Add more fields to clear as needed
         }
 
         private void cmbProduct_SelectedIndexChanged(object sender, EventArgs e)
@@ -214,9 +267,13 @@ namespace VCSM
             // Clear the existing rows
             dataGridViewCargo.Rows.Clear();
 
+            double totalWeight = 0;
+
             // Loop through the CargoList and add each item to the DataGridView
             foreach (var cargoItem in CargoList)
             {
+                totalWeight += cargoItem.TotalWeight;
+
                 dataGridViewCargo.Rows.Add(
                     cargoItem.Region,
                     cargoItem.MaxWeight,
@@ -231,18 +288,24 @@ namespace VCSM
                     cargoItem.WeightPerSquareMeter,
                     cargoItem.TotalVolume,
                     cargoItem.TotalWeight,
-                    cargoItem.MaxWeightPerPallet
+                    cargoItem.MaxWeightPerPallet,
+                    cargoItem.WeightPerLine
                 );
             }
+
+            // Update the total weight label
+            lblTotalWeight.Text = $"Total container weight: {totalWeight} KG";
         }
 
         private void numericUpDownLength_ValueChanged(object sender, EventArgs e)
         {
-            // Example: Display a message if the width exceeds a certain threshold
+            //Display a message if the width exceeds a certain threshold
+            /*
             if (numericUpDownWidth.Value > numericUpDownLength.Value)
             {
                 MessageBox.Show("Warning: The width is quite large. Are you sure?");
             }
+            */
         }
 
         private void numericUpDownLenght_ValueChanged(object sender, EventArgs e)
@@ -252,8 +315,7 @@ namespace VCSM
 
         private void txtQuantity_TextChanged(object sender, EventArgs e)
         {
-            // Set the flag indicating that the user has interacted with Quantity
-            userInteractedWithQuantity = true;
+           
         }
     }
 }

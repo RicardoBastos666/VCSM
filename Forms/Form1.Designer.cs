@@ -41,11 +41,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtQuantity = new System.Windows.Forms.TextBox();
             this.lblWarning = new System.Windows.Forms.Label();
-            this.lblCalculatedPallets = new System.Windows.Forms.Label();
             this.dataGridViewCargo = new System.Windows.Forms.DataGridView();
             this.materialPropertiesBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.numericUpDownWidth = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownLength = new System.Windows.Forms.NumericUpDown();
+            this.lblTotalWeight = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCargo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.materialPropertiesBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWidth)).BeginInit();
@@ -157,15 +157,6 @@
             this.lblWarning.TabIndex = 17;
             this.lblWarning.Text = "label2";
             // 
-            // lblCalculatedPallets
-            // 
-            this.lblCalculatedPallets.AutoSize = true;
-            this.lblCalculatedPallets.Location = new System.Drawing.Point(984, 125);
-            this.lblCalculatedPallets.Name = "lblCalculatedPallets";
-            this.lblCalculatedPallets.Size = new System.Drawing.Size(51, 20);
-            this.lblCalculatedPallets.TabIndex = 18;
-            this.lblCalculatedPallets.Text = "label2";
-            // 
             // dataGridViewCargo
             // 
             this.dataGridViewCargo.AllowUserToDeleteRows = false;
@@ -200,15 +191,23 @@
             this.numericUpDownLength.TabIndex = 21;
             this.numericUpDownLength.ValueChanged += new System.EventHandler(this.numericUpDownLenght_ValueChanged);
             // 
+            // lblTotalWeight
+            // 
+            this.lblTotalWeight.AutoSize = true;
+            this.lblTotalWeight.Location = new System.Drawing.Point(12, 569);
+            this.lblTotalWeight.Name = "lblTotalWeight";
+            this.lblTotalWeight.Size = new System.Drawing.Size(0, 20);
+            this.lblTotalWeight.TabIndex = 22;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1896, 1048);
+            this.Controls.Add(this.lblTotalWeight);
             this.Controls.Add(this.numericUpDownLength);
             this.Controls.Add(this.numericUpDownWidth);
             this.Controls.Add(this.dataGridViewCargo);
-            this.Controls.Add(this.lblCalculatedPallets);
             this.Controls.Add(this.lblWarning);
             this.Controls.Add(this.txtQuantity);
             this.Controls.Add(this.label1);
@@ -247,11 +246,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtQuantity;
         private System.Windows.Forms.Label lblWarning;
-        private System.Windows.Forms.Label lblCalculatedPallets;
         private System.Windows.Forms.DataGridView dataGridViewCargo;
         private System.Windows.Forms.BindingSource materialPropertiesBindingSource;
         private System.Windows.Forms.NumericUpDown numericUpDownWidth;
         private System.Windows.Forms.NumericUpDown numericUpDownLength;
+        private System.Windows.Forms.Label lblTotalWeight;
     }
 }
 
