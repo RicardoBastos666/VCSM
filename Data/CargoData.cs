@@ -16,9 +16,9 @@ namespace VCSM.Data
 
         public static Dictionary<string, MaterialProperties> MaterialWeights { get; } = new Dictionary<string, MaterialProperties>
         {
-            {"DoorFlushHoneyComb", new MaterialProperties { WeightPerSquareMeter = 0.0, ThicknessWeights = new Dictionary<int, double> { { 35, 9.5 }, { 44, 10.4 } } }},
-            {"DoorFlushFR45_90", new MaterialProperties { WeightPerSquareMeter = 26.0, ThicknessWeights = new Dictionary<int, double> { { 35, 26.0 }, { 44, 26.0 } } }},
-            {"DoorFlushSolid", new MaterialProperties { WeightPerSquareMeter = 0.0, ThicknessWeights = new Dictionary<int, double> { { 35, 24.0 }, { 44, 26.0 } } }},
+            {"DoorFlushHoneyComb", new MaterialProperties { WeightPerSquareMeter = 9.5, ThicknessWeights = new Dictionary<int, double> { { 35, 9.5 }, { 44, 10.4 } } }},
+            {"DoorFlushFR45_90", new MaterialProperties { WeightPerSquareMeter = 26.0, ThicknessWeights = new Dictionary<int, double> { { 44, 26.0 } } }},
+            {"DoorFlushSolid", new MaterialProperties { WeightPerSquareMeter = 24.0, ThicknessWeights = new Dictionary<int, double> { { 35, 24.0 }, { 44, 26.0 } } }},
         };
 
         public static Dictionary<string, double> RegionWeightLimits { get; } = new Dictionary<string, double>

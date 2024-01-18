@@ -118,6 +118,18 @@ namespace VCSM
                     cmbThickness.Items.Add(thickness);
                 }
 
+                // If the selected product is "DoorFlush_FR45/90", lock the thickness to 44
+                if (selectedProduct == "DoorFlush_FR45/90")
+                {
+                    cmbThickness.SelectedItem = 44;
+                    cmbThickness.Enabled = false; // Disable the dropdown for this product
+                }
+                else
+                {
+                    // For other products, enable the dropdown
+                    cmbThickness.Enabled = true;
+                }
+
                 // Set default selected index (optional)
                 //cmbThickness.SelectedIndex = 0;
 
@@ -165,6 +177,12 @@ namespace VCSM
 
         private void CmbThickness_SelectedIndexChanged(object sender, EventArgs e)
         {
+            // If the selected product is "DoorFlush_FR45/90", enforce the thickness to be 44
+            if (cmbProduct.SelectedItem?.ToString() == "DoorFlush_FR45/90")
+            {
+                cmbThickness.SelectedItem = 44;
+            }
+
             // Clear the QTY field when thickness changes
             txtQuantity.Clear();
             // Update quantity when the selected thickness changes
@@ -240,7 +258,9 @@ namespace VCSM
             // material properties and dimensions to calculate the weight
             double weightPerSquareMeter = Data.CargoData.MaterialWeights[product].WeightPerSquareMeter;
             double thicknessWeight = Data.CargoData.MaterialWeights[product].ThicknessWeights[thickness];
-            double totalArea = (width / 100.0) * (length / 100.0) * quantity; // Convert width and length to meters
+            double totalArea = (width / 1000.0) * (length / 1000.0) * quantity; // Convert width and length to meters
+            // Debug prints
+            Console.WriteLine($"Product: {product}, Thickness: {thickness}, WeightPerSquareMeter: {weightPerSquareMeter}, ThicknessWeight: {thicknessWeight}, TotalArea: {totalArea}");
             double itemWeight = totalArea * weightPerSquareMeter + thicknessWeight * quantity;
             return itemWeight;
         }
