@@ -121,6 +121,8 @@ namespace VCSM
                 // If the selected product is "DoorFlush_FR45/90", lock the thickness to 44
                 if (selectedProduct == "DoorFlush_FR45/90")
                 {
+                    cmbThickness.Items.Clear(); // Clear any existing items
+                    cmbThickness.Items.Add(44); // Add only 44
                     cmbThickness.SelectedItem = 44;
                     cmbThickness.Enabled = false; // Disable the dropdown for this product
                 }
@@ -180,7 +182,7 @@ namespace VCSM
             // If the selected product is "DoorFlush_FR45/90", enforce the thickness to be 44
             if (cmbProduct.SelectedItem?.ToString() == "DoorFlush_FR45/90")
             {
-                cmbThickness.SelectedItem = 44;
+                cmbThickness.SelectedItem = 1;
             }
 
             // Clear the QTY field when thickness changes
@@ -220,6 +222,9 @@ namespace VCSM
             // Calculate the total weight of all items in the CargoList
             double totalWeight = CargoList.Sum(item => item.TotalWeight);
 
+            // Debug output
+            Console.WriteLine($"TotalWeight before adding new item: {totalWeight}");
+
             // Get the maximum weight for the selected region
             string selectedRegion = cmbRegion.SelectedItem.ToString();
             double maxRegionWeight = Data.CargoData.RegionWeightLimits[selectedRegion];
@@ -258,13 +263,15 @@ namespace VCSM
             // material properties and dimensions to calculate the weight
             double weightPerSquareMeter = Data.CargoData.MaterialWeights[product].WeightPerSquareMeter;
             double thicknessWeight = Data.CargoData.MaterialWeights[product].ThicknessWeights[thickness];
-            double totalArea = (width / 1000.0) * (length / 1000.0) * quantity; // Convert width and length to meters
+            double totalArea = Width / 1000.0 * length / 1000.0 * quantity; // Convert width and length to meters
+            //double totalArea = (Width / 1000.0) * (Length / 1000.0) * Quantity; // Convert width and length to meters?
+
             // Debug prints
             Console.WriteLine($"Product: {product}, Thickness: {thickness}, WeightPerSquareMeter: {weightPerSquareMeter}, ThicknessWeight: {thicknessWeight}, TotalArea: {totalArea}");
+
             double itemWeight = totalArea * weightPerSquareMeter + thicknessWeight * quantity;
             return itemWeight;
         }
-
 
         private void ClearAllFields()
         {
@@ -293,6 +300,8 @@ namespace VCSM
             foreach (var cargoItem in CargoList)
             {
                 totalWeight += cargoItem.TotalWeight;
+                // Declare totalArea here
+                double totalArea = (cargoItem.Width / 1000.0) * (cargoItem.Length / 1000.0) * cargoItem.Quantity; // Convert width and length to meters
 
                 dataGridViewCargo.Rows.Add(
                     cargoItem.Region,
@@ -311,6 +320,9 @@ namespace VCSM
                     cargoItem.MaxWeightPerPallet,
                     cargoItem.WeightPerLine
                 );
+                // Debug output
+                Console.WriteLine($"Product: {cargoItem.Product}, Thickness: {cargoItem.Thickness}, WeightPerSquareMeter: {cargoItem.WeightPerSquareMeter}, ThicknessWeight: {Data.CargoData.MaterialWeights[cargoItem.Product].ThicknessWeights[cargoItem.Thickness]}, TotalArea: {totalArea}, ItemWeight: {cargoItem.TotalWeight}");
+
             }
 
             // Update the total weight label

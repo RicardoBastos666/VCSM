@@ -30,11 +30,27 @@ namespace VCSM.Data
             {
                 // Calculate the total weight based on your logic
                 double weightPerSquareMeter = Data.CargoData.MaterialWeights[Product].WeightPerSquareMeter;
-                double thicknessWeight = Data.CargoData.MaterialWeights[Product].ThicknessWeights[Thickness];
-                double totalArea = Width * Length * Quantity / 1_000_000.0; // Convert to square meters
+
+                // Check if the specified thickness exists in the dictionary
+                double thicknessWeight;
+                if (Data.CargoData.MaterialWeights[Product].ThicknessWeights.ContainsKey(Thickness))
+                {
+                    thicknessWeight = Data.CargoData.MaterialWeights[Product].ThicknessWeights[Thickness];
+                }
+                else
+                {
+                    // Handle the case where the thickness is not found (you can use a default value or raise an error)
+                    Console.WriteLine($"Warning: Thickness {Thickness} not found for product {Product}. Using default thickness weight.");
+                    // You may want to provide a default value or raise an exception based on your application's requirements
+                    thicknessWeight = 44;
+                }
+
+                double totalArea = Width * Length * Quantity / 1_000_000.0; // Keep the dimensions in millimeters
 
                 return totalArea * weightPerSquareMeter + thicknessWeight * Quantity;
             }
         }
+
+
     }
 }
