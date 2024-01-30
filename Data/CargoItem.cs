@@ -20,7 +20,6 @@ namespace VCSM.Data
         public int ExtraWidth { get; set; }
         public double WeightPerSquareMeter { get; set; }
         public double TotalVolume { get; set; }
-        //public double TotalWeight { get; set; }
         public double MaxWeightPerPallet { get; set; }
         public double WeightPerLine => Quantity * WeightPerSquareMeter * Width * Length / 1_000_000;  // Assuming the dimensions are in millimeters
 
@@ -29,28 +28,25 @@ namespace VCSM.Data
             get
             {
                 // Calculate the total weight based on your logic
-                double weightPerSquareMeter = Data.CargoData.MaterialWeights[Product].WeightPerSquareMeter;
+                double weightPerSquareMeter;
 
-                // Check if the specified thickness exists in the dictionary
-                double thicknessWeight;
-                if (Data.CargoData.MaterialWeights[Product].ThicknessWeights.ContainsKey(Thickness))
+                if (Data.CargoData.MaterialWeights.ContainsKey(Product) &&
+                    Data.CargoData.MaterialWeights[Product].ContainsKey(Thickness))
                 {
-                    thicknessWeight = Data.CargoData.MaterialWeights[Product].ThicknessWeights[Thickness];
+                    weightPerSquareMeter = Data.CargoData.MaterialWeights[Product][Thickness];
                 }
                 else
                 {
-                    // Handle the case where the thickness is not found (you can use a default value or raise an error)
-                    Console.WriteLine($"Warning: Thickness {Thickness} not found for product {Product}. Using default thickness weight.");
+                    // Handle the case where the product or thickness is not found
+                    Console.WriteLine($"Warning: Product {Product} with thickness {Thickness} not found. Using default weight.");
                     // You may want to provide a default value or raise an exception based on your application's requirements
-                    thicknessWeight = 44;
+                    weightPerSquareMeter = 0; // Set a default value, replace this with your logic
                 }
 
                 double totalArea = Width * Length * Quantity / 1_000_000.0; // Keep the dimensions in millimeters
 
-                return totalArea * weightPerSquareMeter + thicknessWeight * Quantity;
+                return totalArea * weightPerSquareMeter;
             }
         }
-
-
     }
 }

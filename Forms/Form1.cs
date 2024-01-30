@@ -25,24 +25,42 @@ namespace VCSM
             lblWarning.Text = "";
             // Hook up TextChanged event for txtQuantity
             txtQuantity.TextChanged += (sender, e) => UpdateQuantity();
+            // Bind the btnRemove_Click event to the remove button
+            btnRemove.Click += btnRemove_Click;
         }
 
         private void InitializeWidthNumericUpDown()
         {
             // NumericUpDown control numericUpDownWidth
             // Set the minimum and maximum values for the width
-            numericUpDownLength.Minimum = 0;  // Adjust this based on your minimum allowed length
-            numericUpDownLength.Maximum = 9999;  // Remove or comment out this line to remove the maximum restriction
-            numericUpDownWidth.Minimum = 0;
-            numericUpDownWidth.Maximum = 9999;  // Remove or comment out this line to remove the maximum restriction
+            numericUpDownLength.Minimum = 2032;  // Adjust this based on your minimum allowed length
+            numericUpDownLength.Maximum = 2743;  // Remove or comment out this line to remove the maximum restriction
+            numericUpDownWidth.Minimum = 300;
+            numericUpDownWidth.Maximum = 1220;  // Remove or comment out this line to remove the maximum restriction
+
             // Set the default value or adjust the increment based on your requirements
             // numericUpDownWidth.Value = 0;  // Default value
             numericUpDownWidth.Increment = 1;  // Increment value
-                                               // Optionally, handle the ValueChanged event to perform additional actions when the value changes
-                                               // numericUpDownWidth.ValueChanged += numericUpDownLength_ValueChanged;
-                                               // numericUpDownLength.ValueChanged += numericUpDownLength_ValueChanged;
+
+            // Optionally, handle the ValueChanged event to perform additional actions when the value changes
+            // numericUpDownWidth.ValueChanged += numericUpDownLength_ValueChanged;
+            // numericUpDownLength.ValueChanged += numericUpDownLength_ValueChanged;
+
+            // Subscribe to the SelectedIndexChanged event of cmbProduct
+            cmbProduct.SelectedIndexChanged += CmbProduct_SelectedIndexChanged;
+
+            // Call the event handler manually to set the initial values
+            CmbProduct_SelectedIndexChanged(cmbProduct, EventArgs.Empty);
         }
 
+        private void CmbProduct_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Check if the selected product is "DoorFlushFR45/90"
+            if (cmbProduct.SelectedItem?.ToString() == "DoorFlushFR45_90")
+            {
+                    cmbThickness.SelectedIndex = 1; // Index 2 corresponds to the thickness 44
+            }
+        }
         private void InitializeDropdowns()
         {
             // Populate the Product dropdown
@@ -86,6 +104,7 @@ namespace VCSM
             dataGridViewCargo.Columns.Add("WeightPerSquareMeter", "Weight (Kg/m2)");
             dataGridViewCargo.Columns.Add("TotalVolume", "Total Volume (m3)");
             dataGridViewCargo.Columns.Add("TotalWeight", "Total Weight (KG)");
+            dataGridViewCargo.Columns.Add("NumberOfPallets", "Number of Pallets");
             //add efective lenght, width and pallet number
 
             // Set DataGridView properties
@@ -104,38 +123,34 @@ namespace VCSM
 
         private void UpdateThicknessDropdown()
         {
-            // Clear previous items
             cmbThickness.Items.Clear();
 
-            // Get the selected product
             string selectedProduct = cmbProduct.SelectedItem as string;
 
-            // Populate the Thickness dropdown based on the selected product
             if (Data.CargoData.MaterialWeights.ContainsKey(selectedProduct))
             {
-                foreach (var thickness in Data.CargoData.MaterialWeights[selectedProduct].ThicknessWeights.Keys)
+                var thicknessWeights = Data.CargoData.MaterialWeights[selectedProduct];
+
+                if (thicknessWeights != null)
                 {
-                    cmbThickness.Items.Add(thickness);
+                    foreach (var thickness in thicknessWeights.Keys)
+                    {
+                        cmbThickness.Items.Add(thickness);
+                    }
                 }
 
-                // If the selected product is "DoorFlush_FR45/90", lock the thickness to 44
-                if (selectedProduct == "DoorFlush_FR45/90")
+                if (selectedProduct == "DoorFlushFR45_90")
                 {
-                    cmbThickness.Items.Clear(); // Clear any existing items
-                    cmbThickness.Items.Add(44); // Add only 44
+                    cmbThickness.Items.Clear();
+                    cmbThickness.Items.Add(44);
                     cmbThickness.SelectedItem = 44;
-                    cmbThickness.Enabled = false; // Disable the dropdown for this product
+                    cmbThickness.Enabled = false;
                 }
                 else
                 {
-                    // For other products, enable the dropdown
                     cmbThickness.Enabled = true;
                 }
 
-                // Set default selected index (optional)
-                //cmbThickness.SelectedIndex = 0;
-
-                // Update quantity based on thickness
                 UpdateQuantity();
             }
         }
@@ -179,17 +194,40 @@ namespace VCSM
 
         private void CmbThickness_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // If the selected product is "DoorFlush_FR45/90", enforce the thickness to be 44
-            if (cmbProduct.SelectedItem?.ToString() == "DoorFlush_FR45/90")
+            // If the selected product is "DoorFlush_FR45/90"
+            if (cmbProduct.SelectedItem?.ToString() == "DoorFlushFR45_90")
             {
-                cmbThickness.SelectedItem = 1;
+                // Check if the selected thickness is not 44
+                if (cmbThickness.SelectedIndex != 1) // Index 1 corresponds to thickness 44
+                {
+                    // Display a warning in the existing lblWarning label
+                    lblWarning.Text = "The 'DoorFlush_FR45/90' product only supports the thickness of 44.";
+
+                    // Disable the "Add to Cargo" button
+                    //btnAddToCargo.Enabled = false;
+                    return; // Exit the method to prevent further processing
+                }
+                else
+                {
+                    // If thickness is 44, clear the warning in the existing lblWarning label
+                    lblWarning.Text = "";
+                }
+            }
+            else
+            {
+                // For other products, clear the warning in the existing lblWarning label
+                lblWarning.Text = "";
             }
 
             // Clear the QTY field when thickness changes
             txtQuantity.Clear();
             // Update quantity when the selected thickness changes
             UpdateQuantity();
+
+            // Enable or disable the "Add to Cargo" button based on the selected product and thickness
+            btnAddToCargo.Enabled = true;
         }
+
 
         private void btnCalculate_Click_1(object sender, EventArgs e)
         {
@@ -211,6 +249,13 @@ namespace VCSM
             int selectedWidth = Convert.ToInt32(numericUpDownWidth.Text);
             int selectedLength = Convert.ToInt32(numericUpDownLength.Text);
 
+            // Check if the selected product is "DoorFlush_FR45/90" and thickness is not 44
+            if (selectedProduct == "DoorFlushFR45_90" && selectedThickness != 44)
+            {
+                lblWarning.Text = "DoorFlushFR45_90 does not have a thickness of 44. Please choose another thickness.";
+                return; // Do not proceed with adding to cargo
+            }
+
             // Check if the quantity is a multiple of 21 or 28
             int maxQuantityPerPallet = GetMaxQuantityPerPallet();
             if (selectedQuantity % maxQuantityPerPallet != 0)
@@ -229,7 +274,7 @@ namespace VCSM
             string selectedRegion = cmbRegion.SelectedItem.ToString();
             double maxRegionWeight = Data.CargoData.RegionWeightLimits[selectedRegion];
 
-            // Check if adding the new item will exceed the maximum weight for the region
+            // Check if adding the new item will exceed the maximum weight for the region (removed selectedThickness, below)
             if (totalWeight + CalculateItemWeight(selectedProduct, selectedThickness, selectedQuantity, selectedWidth, selectedLength) > maxRegionWeight)
             {
                 lblWarning.Text = $"Warning: Adding this item will exceed the maximum weight limit for the region ({maxRegionWeight} kg).";
@@ -256,30 +301,40 @@ namespace VCSM
             ClearAllFields();
         }
 
-
-        // method to calculate the weight of a single item
         private double CalculateItemWeight(string product, int thickness, int quantity, int width, int length)
         {
             // material properties and dimensions to calculate the weight
-            double weightPerSquareMeter = Data.CargoData.MaterialWeights[product].WeightPerSquareMeter;
-            double thicknessWeight = Data.CargoData.MaterialWeights[product].ThicknessWeights[thickness];
-            double totalArea = Width / 1000.0 * length / 1000.0 * quantity; // Convert width and length to meters
-            //double totalArea = (Width / 1000.0) * (Length / 1000.0) * Quantity; // Convert width and length to meters?
+            var thicknessWeights = Data.CargoData.MaterialWeights[product];
 
-            // Debug prints
-            Console.WriteLine($"Product: {product}, Thickness: {thickness}, WeightPerSquareMeter: {weightPerSquareMeter}, ThicknessWeight: {thicknessWeight}, TotalArea: {totalArea}");
+            // Default weightPerSquareMeter value
+            double weightPerSquareMeter = 0.0;
 
-            double itemWeight = totalArea * weightPerSquareMeter + thicknessWeight * quantity;
+            // Check if the selected thickness is available in the dictionary
+            if (thicknessWeights.ContainsKey(thickness))
+            {
+                weightPerSquareMeter = thicknessWeights[thickness];
+            }
+            else
+            {
+                // Handle the case where the selected thickness is not found
+                // maybe provide a default value or raise an exception based on your application's requirements
+                Console.WriteLine($"Warning: Thickness {thickness} not found for product {product}. Using default thickness weight.");
+                // For now, let's use 44 as a default thickness weight
+                weightPerSquareMeter = thicknessWeights.ContainsKey(44) ? thicknessWeights[44] : 0.0;
+            }
+
+            double totalArea = width / 1000.0 * length / 1000.0 * quantity; // Convert width and length to meters
+
+            double itemWeight = totalArea * weightPerSquareMeter;
             return itemWeight;
         }
-
         private void ClearAllFields()
         {
             cmbProduct.SelectedIndex = 0;
             cmbThickness.SelectedIndex = 0;
             txtQuantity.Clear();
-            numericUpDownWidth.Value = 0;
-            numericUpDownLength.Value = 0;
+            numericUpDownWidth.Value = 300;
+            numericUpDownLength.Value = 2032;
             // Add more fields to clear as needed
         }
 
@@ -318,15 +373,32 @@ namespace VCSM
                     cargoItem.TotalVolume,
                     cargoItem.TotalWeight,
                     cargoItem.MaxWeightPerPallet,
-                    cargoItem.WeightPerLine
+                    cargoItem.WeightPerLine,
+                    CalculateNumberOfPallets(cargoItem.Thickness, cargoItem.Quantity)
                 );
-                // Debug output
-                Console.WriteLine($"Product: {cargoItem.Product}, Thickness: {cargoItem.Thickness}, WeightPerSquareMeter: {cargoItem.WeightPerSquareMeter}, ThicknessWeight: {Data.CargoData.MaterialWeights[cargoItem.Product].ThicknessWeights[cargoItem.Thickness]}, TotalArea: {totalArea}, ItemWeight: {cargoItem.TotalWeight}");
 
             }
 
             // Update the total weight label
             lblTotalWeight.Text = $"Total container weight: {totalWeight} KG";
+        }
+
+        private int CalculateNumberOfPallets(int thickness, int quantity)
+        {
+            // Return the number of pallets based on the thickness and quantity
+            if (thickness == 35)
+            {
+                return quantity / 28;
+            }
+            else if (thickness == 44)
+            {
+                return quantity / 21;
+            }
+            else
+            {
+                // Handle other thickness values (return 0 or show a warning)
+                return 1;
+            }
         }
 
         private void numericUpDownLength_ValueChanged(object sender, EventArgs e)
@@ -348,6 +420,38 @@ namespace VCSM
         private void txtQuantity_TextChanged(object sender, EventArgs e)
         {
            
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            // Check if any row is selected
+            if (dataGridViewCargo.SelectedRows.Count > 0)
+            {
+                // Get the selected row
+                DataGridViewRow selectedRow = dataGridViewCargo.SelectedRows[0];
+
+                // Get the values you need to identify the item (e.g., product, thickness, etc.)
+                string selectedProduct = selectedRow.Cells["Product"].Value.ToString();
+                int selectedThickness = Convert.ToInt32(selectedRow.Cells["Thickness"].Value);
+                // Add more values as needed
+
+                // Find the corresponding item in the CargoList
+                CargoItem itemToRemove = CargoList.FirstOrDefault(item =>
+                    item.Product == selectedProduct &&
+                    item.Thickness == selectedThickness
+                // Add more conditions as needed
+                );
+
+                // Remove the item from the CargoList
+                CargoList.Remove(itemToRemove);
+
+                // Update the DataGridView
+                DisplayCargoInDataGridView();
+            }
+            else
+            {
+                MessageBox.Show("Please select a row to remove.");
+            }
         }
     }
 }
