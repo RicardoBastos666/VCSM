@@ -21,6 +21,28 @@ namespace VCSM.Data
         public double WeightPerSquareMeter { get; set; }
         public double TotalVolume { get; set; }
         public double MaxWeightPerPallet { get; set; }
+
+        public int NumberOfPallets
+        {
+            get
+            {
+                // Return the number of pallets based on the thickness and quantity
+                if (Thickness == 35)
+                {
+                    return Quantity / 28;
+                }
+                else if (Thickness == 44)
+                {
+                    return Quantity / 21;
+                }
+                else
+                {
+                    // Handle other thickness values (return 0 or show a warning)
+                    return 0;
+                }
+            }
+        }
+
         public double WeightPerLine => Quantity * WeightPerSquareMeter * Width * Length / 1_000_000;  // Assuming the dimensions are in millimeters
 
         public double TotalWeight

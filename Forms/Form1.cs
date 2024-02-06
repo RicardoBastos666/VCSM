@@ -11,6 +11,8 @@ namespace VCSM
     {
         private List<CargoItem> CargoList = new List<CargoItem>();
         private bool userInteractedWithQuantity = false;
+        private int result;
+
         public Form1()
         {
             InitializeComponent();
@@ -56,9 +58,9 @@ namespace VCSM
         private void CmbProduct_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Check if the selected product is "DoorFlushFR45/90"
-            if (cmbProduct.SelectedItem?.ToString() == "DoorFlushFR45_90")
+            if (cmbProduct.SelectedItem?.ToString() == "DoorFlushFR45_90")  
             {
-                    cmbThickness.SelectedIndex = 1; // Index 2 corresponds to the thickness 44
+                cmbThickness.SelectedIndex = 1; // Index 2 corresponds to the thickness 44
             }
         }
         private void InitializeDropdowns()
@@ -112,7 +114,6 @@ namespace VCSM
             dataGridViewCargo.Columns["MaxLength"].Visible = false;
             dataGridViewCargo.Columns["QuantityPerPallet"].Visible = false;
             dataGridViewCargo.Columns["ExtraWidth"].Visible = false;
-            dataGridViewCargo.Columns["TotalWeight"].Visible = true;
             dataGridViewCargo.Columns["TotalVolume"].Visible = false;
             dataGridViewCargo.Columns["MaxLength"].Visible = false;
             dataGridViewCargo.Columns["WeightPerSquareMeter"].Visible = false;
@@ -225,7 +226,7 @@ namespace VCSM
             UpdateQuantity();
 
             // Enable or disable the "Add to Cargo" button based on the selected product and thickness
-            btnAddToCargo.Enabled = true;
+            //btnAddToCargo.Enabled = true;
         }
 
 
@@ -291,6 +292,9 @@ namespace VCSM
                 Length = selectedLength
             };
 
+            // Access the NumberOfPallets property
+            int numberOfPallets = newCargoItem.NumberOfPallets;
+
             // Add the new CargoItem to the list
             CargoList.Add(newCargoItem);
 
@@ -355,9 +359,13 @@ namespace VCSM
             foreach (var cargoItem in CargoList)
             {
                 totalWeight += cargoItem.TotalWeight;
+
+                Console.WriteLine($"CargoItem: {cargoItem.Product}, Thickness: {cargoItem.Thickness}, NumberOfPallets: {cargoItem.NumberOfPallets}");
+
+
                 // Declare totalArea here
                 double totalArea = (cargoItem.Width / 1000.0) * (cargoItem.Length / 1000.0) * cargoItem.Quantity; // Convert width and length to meters
-
+                
                 dataGridViewCargo.Rows.Add(
                     cargoItem.Region,
                     cargoItem.MaxWeight,
@@ -374,31 +382,12 @@ namespace VCSM
                     cargoItem.TotalWeight,
                     cargoItem.MaxWeightPerPallet,
                     cargoItem.WeightPerLine,
-                    CalculateNumberOfPallets(cargoItem.Thickness, cargoItem.Quantity)
+                    cargoItem.NumberOfPallets
                 );
-
             }
 
             // Update the total weight label
             lblTotalWeight.Text = $"Total container weight: {totalWeight} KG";
-        }
-
-        private int CalculateNumberOfPallets(int thickness, int quantity)
-        {
-            // Return the number of pallets based on the thickness and quantity
-            if (thickness == 35)
-            {
-                return quantity / 28;
-            }
-            else if (thickness == 44)
-            {
-                return quantity / 21;
-            }
-            else
-            {
-                // Handle other thickness values (return 0 or show a warning)
-                return 1;
-            }
         }
 
         private void numericUpDownLength_ValueChanged(object sender, EventArgs e)
