@@ -380,9 +380,9 @@ namespace VCSM
                     cargoItem.WeightPerSquareMeter,
                     cargoItem.TotalVolume,
                     cargoItem.TotalWeight,
+                    cargoItem.NumberOfPallets,
                     cargoItem.MaxWeightPerPallet,
-                    cargoItem.WeightPerLine,
-                    cargoItem.NumberOfPallets
+                    cargoItem.WeightPerLine
                 );
             }
 
