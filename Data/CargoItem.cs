@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace VCSM.Data
 {
@@ -13,11 +14,26 @@ namespace VCSM.Data
         public string Product { get; set; }
         public int Thickness { get; set; }
         public int Width { get; set; }
+        public int EffWidth
+        { 
+            get
+            {
+                //calc EffWidth based on documentation logic 
+                if (Width < 2299)
+                {
+                    return Width + 10;
+                }
+                else 
+                {
+                    return Width + 40;
+                }
+            } 
+        }
         public int Length { get; set; }
+        public int EffLength => Length + 20;
         public int MaxLength { get; set; }
         public int Quantity { get; set; }
         public int QuantityPerPallet { get; set; }
-        public int ExtraWidth { get; set; }
         public double WeightPerSquareMeter { get; set; }
         public double TotalVolume { get; set; }
         public double MaxWeightPerPallet { get; set; }
@@ -38,6 +54,7 @@ namespace VCSM.Data
                 else
                 {
                     // Handle other thickness values (return 0 or show a warning)
+                    MessageBox.Show($"An error ocurred. Thickness value of {Thickness} is invalid");
                     return 0;
                 }
             }
