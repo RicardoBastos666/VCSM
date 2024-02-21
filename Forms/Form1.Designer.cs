@@ -47,6 +47,7 @@
             this.numericUpDownLength = new System.Windows.Forms.NumericUpDown();
             this.lblTotalWeight = new System.Windows.Forms.Label();
             this.btnRemove = new System.Windows.Forms.Button();
+            this.btnFinishOrder = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewCargo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.materialPropertiesBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownWidth)).BeginInit();
@@ -60,7 +61,7 @@
             this.cmbProduct.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cmbProduct.Name = "cmbProduct";
             this.cmbProduct.Size = new System.Drawing.Size(134, 21);
-            this.cmbProduct.TabIndex = 0;
+            this.cmbProduct.TabIndex = 1;
             // 
             // cmbThickness
             // 
@@ -69,7 +70,7 @@
             this.cmbThickness.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cmbThickness.Name = "cmbThickness";
             this.cmbThickness.Size = new System.Drawing.Size(134, 21);
-            this.cmbThickness.TabIndex = 1;
+            this.cmbThickness.TabIndex = 2;
             // 
             // cmbRegion
             // 
@@ -78,7 +79,7 @@
             this.cmbRegion.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.cmbRegion.Name = "cmbRegion";
             this.cmbRegion.Size = new System.Drawing.Size(128, 21);
-            this.cmbRegion.TabIndex = 2;
+            this.cmbRegion.TabIndex = 0;
             // 
             // lblProduct
             // 
@@ -136,10 +137,10 @@
             this.btnAddToCargo.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnAddToCargo.Name = "btnAddToCargo";
             this.btnAddToCargo.Size = new System.Drawing.Size(133, 21);
-            this.btnAddToCargo.TabIndex = 12;
+            this.btnAddToCargo.TabIndex = 6;
             this.btnAddToCargo.Text = "Add to Cargo";
             this.btnAddToCargo.UseVisualStyleBackColor = true;
-            this.btnAddToCargo.Click += new System.EventHandler(this.btnCalculate_Click_1);
+            this.btnAddToCargo.Click += new System.EventHandler(this.btnCalculate_Click);
             // 
             // label1
             // 
@@ -157,7 +158,7 @@
             this.txtQuantity.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtQuantity.Name = "txtQuantity";
             this.txtQuantity.Size = new System.Drawing.Size(120, 20);
-            this.txtQuantity.TabIndex = 16;
+            this.txtQuantity.TabIndex = 5;
             this.txtQuantity.TextChanged += new System.EventHandler(this.txtQuantity_TextChanged);
             // 
             // lblWarning
@@ -181,7 +182,7 @@
             this.dataGridViewCargo.RowHeadersWidth = 62;
             this.dataGridViewCargo.RowTemplate.Height = 28;
             this.dataGridViewCargo.Size = new System.Drawing.Size(784, 239);
-            this.dataGridViewCargo.TabIndex = 19;
+            this.dataGridViewCargo.TabIndex = 8;
             // 
             // materialPropertiesBindingSource
             // 
@@ -192,7 +193,7 @@
             this.numericUpDownWidth.Location = new System.Drawing.Point(288, 96);
             this.numericUpDownWidth.Name = "numericUpDownWidth";
             this.numericUpDownWidth.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownWidth.TabIndex = 20;
+            this.numericUpDownWidth.TabIndex = 3;
             this.numericUpDownWidth.ValueChanged += new System.EventHandler(this.numericUpDownLength_ValueChanged);
             // 
             // numericUpDownLength
@@ -200,7 +201,7 @@
             this.numericUpDownLength.Location = new System.Drawing.Point(411, 96);
             this.numericUpDownLength.Name = "numericUpDownLength";
             this.numericUpDownLength.Size = new System.Drawing.Size(120, 20);
-            this.numericUpDownLength.TabIndex = 21;
+            this.numericUpDownLength.TabIndex = 4;
             this.numericUpDownLength.ValueChanged += new System.EventHandler(this.numericUpDownLenght_ValueChanged);
             // 
             // lblTotalWeight
@@ -214,20 +215,32 @@
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(705, 364);
+            this.btnRemove.Location = new System.Drawing.Point(535, 364);
             this.btnRemove.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Size = new System.Drawing.Size(87, 19);
-            this.btnRemove.TabIndex = 23;
+            this.btnRemove.Size = new System.Drawing.Size(133, 19);
+            this.btnRemove.TabIndex = 7;
             this.btnRemove.Text = "Remove Line";
             this.btnRemove.UseVisualStyleBackColor = true;
             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            // 
+            // btnFinishOrder
+            // 
+            this.btnFinishOrder.Location = new System.Drawing.Point(672, 364);
+            this.btnFinishOrder.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnFinishOrder.Name = "btnFinishOrder";
+            this.btnFinishOrder.Size = new System.Drawing.Size(120, 19);
+            this.btnFinishOrder.TabIndex = 23;
+            this.btnFinishOrder.Text = "Finish Order";
+            this.btnFinishOrder.UseVisualStyleBackColor = true;
+            this.btnFinishOrder.Click += new System.EventHandler(this.btnFinishOrder_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.btnFinishOrder);
             this.Controls.Add(this.btnRemove);
             this.Controls.Add(this.lblTotalWeight);
             this.Controls.Add(this.numericUpDownLength);
@@ -278,6 +291,7 @@
         private System.Windows.Forms.NumericUpDown numericUpDownLength;
         private System.Windows.Forms.Label lblTotalWeight;
         private System.Windows.Forms.Button btnRemove;
+        private System.Windows.Forms.Button btnFinishOrder;
     }
 }
 

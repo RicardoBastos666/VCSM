@@ -10,8 +10,8 @@ namespace VCSM
     public partial class Form1 : Form
     {
         private List<CargoItem> CargoList = new List<CargoItem>();
-        private bool userInteractedWithQuantity = false;
-        private int result;
+        //private bool userInteractedWithQuantity = false;
+        //private int result;
 
         public Form1()
         {
@@ -28,7 +28,6 @@ namespace VCSM
             // Hook up TextChanged event for txtQuantity
             txtQuantity.TextChanged += (sender, e) => UpdateQuantity();
             // Bind the btnRemove_Click event to the remove button
-            btnRemove.Click += btnRemove_Click;
         }
 
         private void InitializeWidthNumericUpDown()
@@ -102,7 +101,6 @@ namespace VCSM
             dataGridViewCargo.Columns.Add("MaxLength", "MaxLength");
             dataGridViewCargo.Columns.Add("Quantity", "Quantity");
             dataGridViewCargo.Columns.Add("QuantityPerPallet", "QTY / PLT");
-            dataGridViewCargo.Columns.Add("ExtraWidth", "ExtraWidth");
             dataGridViewCargo.Columns.Add("WeightPerSquareMeter", "Weight (Kg/m2)");
             dataGridViewCargo.Columns.Add("TotalVolume", "Total Volume (m3)");
             dataGridViewCargo.Columns.Add("TotalWeight", "Total Weight (KG)");
@@ -113,7 +111,6 @@ namespace VCSM
             dataGridViewCargo.Columns["Region"].Visible = false;
             dataGridViewCargo.Columns["MaxLength"].Visible = false;
             dataGridViewCargo.Columns["QuantityPerPallet"].Visible = false;
-            dataGridViewCargo.Columns["ExtraWidth"].Visible = false;
             dataGridViewCargo.Columns["TotalVolume"].Visible = false;
             dataGridViewCargo.Columns["MaxLength"].Visible = false;
             dataGridViewCargo.Columns["WeightPerSquareMeter"].Visible = false;
@@ -151,7 +148,6 @@ namespace VCSM
                 {
                     cmbThickness.Enabled = true;
                 }
-
                 UpdateQuantity();
             }
         }
@@ -230,7 +226,7 @@ namespace VCSM
         }
 
 
-        private void btnCalculate_Click_1(object sender, EventArgs e)
+        private void btnCalculate_Click(object sender, EventArgs e)
         {
             // Validate input
             if (string.IsNullOrEmpty(cmbProduct.Text) ||
@@ -249,6 +245,13 @@ namespace VCSM
             int selectedQuantity = Convert.ToInt32(txtQuantity.Text);
             int selectedWidth = Convert.ToInt32(numericUpDownWidth.Text);
             int selectedLength = Convert.ToInt32(numericUpDownLength.Text);
+
+            // Check if a valid thickness is selected
+            if (cmbThickness.SelectedIndex != 0 && cmbThickness.SelectedIndex != 1)
+            {
+                lblWarning.Text = "Please select a valid thickness (35 or 44).";
+                return;
+            }
 
             // Check if the selected product is "DoorFlush_FR45/90" and thickness is not 44
             if (selectedProduct == "DoorFlushFR45_90" && selectedThickness != 44)
@@ -303,6 +306,7 @@ namespace VCSM
 
             // Clear all fields after adding to cargo
             ClearAllFields();
+
         }
 
         private double CalculateItemWeight(string product, int thickness, int quantity, int width, int length)
@@ -350,22 +354,18 @@ namespace VCSM
 
         private void DisplayCargoInDataGridView()
         {
+            double totalWeight = 0;
+
             // Clear the existing rows
             dataGridViewCargo.Rows.Clear();
-
-            double totalWeight = 0;
 
             // Loop through the CargoList and add each item to the DataGridView
             foreach (var cargoItem in CargoList)
             {
                 totalWeight += cargoItem.TotalWeight;
 
-                Console.WriteLine($"CargoItem: {cargoItem.Product}, Thickness: {cargoItem.Thickness}, NumberOfPallets: {cargoItem.NumberOfPallets}");
-
-
-                // Declare totalArea here
                 double totalArea = (cargoItem.Width / 1000.0) * (cargoItem.Length / 1000.0) * cargoItem.Quantity; // Convert width and length to meters
-                
+
                 dataGridViewCargo.Rows.Add(
                     cargoItem.Region,
                     cargoItem.MaxWeight,
@@ -376,13 +376,14 @@ namespace VCSM
                     cargoItem.MaxLength,
                     cargoItem.Quantity,
                     cargoItem.QuantityPerPallet,
-                    cargoItem.ExtraWidth,
                     cargoItem.WeightPerSquareMeter,
                     cargoItem.TotalVolume,
                     cargoItem.TotalWeight,
                     cargoItem.NumberOfPallets,
                     cargoItem.MaxWeightPerPallet,
-                    cargoItem.WeightPerLine
+                    cargoItem.WeightPerLine,
+                    cargoItem.EffLength,
+                    cargoItem.EffWidth
                 );
             }
 
@@ -390,15 +391,10 @@ namespace VCSM
             lblTotalWeight.Text = $"Total container weight: {totalWeight} KG";
         }
 
+
         private void numericUpDownLength_ValueChanged(object sender, EventArgs e)
         {
-            //Display a message if the width exceeds a certain threshold
-            /*
-            if (numericUpDownWidth.Value > numericUpDownLength.Value)
-            {
-                MessageBox.Show("Warning: The width is quite large. Are you sure?");
-            }
-            */
+            
         }
 
         private void numericUpDownLenght_ValueChanged(object sender, EventArgs e)
@@ -416,31 +412,55 @@ namespace VCSM
             // Check if any row is selected
             if (dataGridViewCargo.SelectedRows.Count > 0)
             {
-                // Get the selected row
-                DataGridViewRow selectedRow = dataGridViewCargo.SelectedRows[0];
+                foreach (DataGridViewRow selectedRow in dataGridViewCargo.SelectedRows)
+                {
+                    // Get the values you need to identify the item (e.g., product, thickness, etc.)
+                    object productCellValue = selectedRow.Cells["Product"].Value;
+                    object thicknessCellValue = selectedRow.Cells["Thickness"].Value;
 
-                // Get the values you need to identify the item (e.g., product, thickness, etc.)
-                string selectedProduct = selectedRow.Cells["Product"].Value.ToString();
-                int selectedThickness = Convert.ToInt32(selectedRow.Cells["Thickness"].Value);
-                // Add more values as needed
+                    // Check if the necessary values are not null
+                    if (productCellValue != null && thicknessCellValue != null)
+                    {
+                        string selectedProduct = productCellValue.ToString();
+                        int selectedThickness = Convert.ToInt32(thicknessCellValue);
 
-                // Find the corresponding item in the CargoList
-                CargoItem itemToRemove = CargoList.FirstOrDefault(item =>
-                    item.Product == selectedProduct &&
-                    item.Thickness == selectedThickness
-                // Add more conditions as needed
-                );
+                        // Find the corresponding item in the CargoList
+                        CargoItem itemToRemove = CargoList.FirstOrDefault(item =>
+                            item.Product == selectedProduct &&
+                            item.Thickness == selectedThickness
+                        );
 
-                // Remove the item from the CargoList
-                CargoList.Remove(itemToRemove);
+                        // Remove the item from the CargoList
+                        CargoList.Remove(itemToRemove);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Selected row is missing necessary information. Please select a full row.");
+                    }
+                }
 
                 // Update the DataGridView
                 DisplayCargoInDataGridView();
+
+                // Clear the selection
+                dataGridViewCargo.ClearSelection();
             }
             else
             {
                 MessageBox.Show("Please select a row to remove.");
             }
+        }
+
+
+
+
+        private void btnFinishOrder_Click(object sender, EventArgs e)
+        {
+            CargoList = CargoList.OrderByDescending(cargoItem => cargoItem.Length).ThenByDescending(cargoItem => cargoItem.Width).ToList();
+            CargoList = CargoList
+                .OrderByDescending(cargoItem => cargoItem.Length >= 2300 ? 1 : 0) 
+                .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
+                .ToList();
         }
     }
 }
