@@ -462,5 +462,83 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
         }
+
+        private void btnGenerateTestData_Click(object sender, EventArgs e)
+        {
+            // Generate and add sample data to the CargoList
+            CargoList.Add(new CargoItem
+            {
+                Region = "Florida",
+                MaxWeight = 26000,
+                Product = "DoorFlushHoneyComb",
+                Thickness = 35,
+                Width = 900,
+                Length = 2350,
+                Quantity = 28,
+            });
+            CargoList.Add(new CargoItem
+            {
+                Region = "Florida",
+                MaxWeight = 26000,
+                Product = "DoorFlushHoneyComb",
+                Thickness = 35,
+                Width = 920,
+                Length = 2360,
+                Quantity = 28,
+            });
+            CargoList.Add(new CargoItem
+            {
+                Region = "Florida",
+                MaxWeight = 26000,
+                Product = "DoorFlushHoneyComb",
+                Thickness = 35,
+                Width = 1200,
+                Length = 2200,
+                Quantity = 28,
+            });
+            CargoList.Add(new CargoItem
+            {
+                Region = "Florida",
+                MaxWeight = 26000,
+                Product = "DoorFlushHoneyComb",
+                Thickness = 35,
+                Width = 1220,
+                Length = 2100,
+                Quantity = 28,
+            });
+            CargoList.Add(new CargoItem
+            {
+                Region = "Florida",
+                MaxWeight = 26000,
+                Product = "DoorFlushHoneyComb",
+                Thickness = 35,
+                Width = 300,
+                Length = 2301,
+                Quantity = 28,
+            });
+            CargoList.Add(new CargoItem
+            {
+                Region = "Florida",
+                MaxWeight = 26000,
+                Product = "DoorFlushHoneyComb",
+                Thickness = 35,
+                Width = 400,
+                Length = 2360,
+                Quantity = 28,
+            });
+            CargoList.Add(new CargoItem
+            {
+                Region = "Florida",
+                MaxWeight = 26000,
+                Product = "DoorFlushHoneyComb",
+                Thickness = 35,
+                Width = 930,
+                Length = 2360,
+                Quantity = 28,
+            });
+
+            // Update the DataGridView
+            DisplayCargoInDataGridView();
+        }
     }
 }
