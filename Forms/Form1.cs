@@ -10,6 +10,7 @@ namespace VCSM
     public partial class Form1 : Form
     {
         private List<CargoItem> CargoList = new List<CargoItem>();
+        private List<FillItem> FillList = new List<FillItem>();
         //private bool userInteractedWithQuantity = false;
         //private int result;
 
@@ -452,8 +453,6 @@ namespace VCSM
         }
 
 
-
-
         private void btnFinishOrder_Click(object sender, EventArgs e)
         {
             CargoList = CargoList.OrderByDescending(cargoItem => cargoItem.Length).ThenByDescending(cargoItem => cargoItem.Width).ToList();
@@ -461,84 +460,18 @@ namespace VCSM
                 .OrderByDescending(cargoItem => cargoItem.Length >= 2300 ? 1 : 0) 
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
-        }
 
-        private void btnGenerateTestData_Click(object sender, EventArgs e)
-        {
-            // Generate and add sample data to the CargoList
-            CargoList.Add(new CargoItem
+            FillItem.Order = 0;
+            FillItem.Position = 1100;
+            if (cargoItem.Length > 2300)
+                FillItem.Mode = "Topo";
+            else
+                FillItem.Mode = "Lado";
+            FillItem.Description = string.Concat(ProductName, " ", cargoItem.Length.ToString(), "x", cargoItem.Width.ToString(), "x", cargoItem.Thickness.ToString());
+            while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
-                Region = "Florida",
-                MaxWeight = 26000,
-                Product = "DoorFlushHoneyComb",
-                Thickness = 35,
-                Width = 900,
-                Length = 2350,
-                Quantity = 28,
-            });
-            CargoList.Add(new CargoItem
-            {
-                Region = "Florida",
-                MaxWeight = 26000,
-                Product = "DoorFlushHoneyComb",
-                Thickness = 35,
-                Width = 920,
-                Length = 2360,
-                Quantity = 28,
-            });
-            CargoList.Add(new CargoItem
-            {
-                Region = "Florida",
-                MaxWeight = 26000,
-                Product = "DoorFlushHoneyComb",
-                Thickness = 35,
-                Width = 1200,
-                Length = 2200,
-                Quantity = 28,
-            });
-            CargoList.Add(new CargoItem
-            {
-                Region = "Florida",
-                MaxWeight = 26000,
-                Product = "DoorFlushHoneyComb",
-                Thickness = 35,
-                Width = 1220,
-                Length = 2100,
-                Quantity = 28,
-            });
-            CargoList.Add(new CargoItem
-            {
-                Region = "Florida",
-                MaxWeight = 26000,
-                Product = "DoorFlushHoneyComb",
-                Thickness = 35,
-                Width = 300,
-                Length = 2301,
-                Quantity = 28,
-            });
-            CargoList.Add(new CargoItem
-            {
-                Region = "Florida",
-                MaxWeight = 26000,
-                Product = "DoorFlushHoneyComb",
-                Thickness = 35,
-                Width = 400,
-                Length = 2360,
-                Quantity = 28,
-            });
-            CargoList.Add(new CargoItem
-            {
-                Region = "Florida",
-                MaxWeight = 26000,
-                Product = "DoorFlushHoneyComb",
-                Thickness = 35,
-                Width = 930,
-                Length = 2360,
-                Quantity = 28,
-            });
 
-            // Update the DataGridView
-            DisplayCargoInDataGridView();
+            }
         }
     }
 }
