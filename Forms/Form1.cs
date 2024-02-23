@@ -463,15 +463,55 @@ namespace VCSM
             /*FillItem fillItem = new FillItem();            
             fillItem.Order = 1;
             fillItem.Position = 1100;
-            if (cargoItem.Length > 2300)
-                fillItem.Mode = "Topo";
-            else
-                fillItem.Mode = "Lado";
-            fillItem.Description = string.Concat(ProductName, " ", cargoItem.Length.ToString(), "x", cargoItem.Width.ToString(), "x", cargoItem.Thickness.ToString());
+            fillItem.Mode = string.Empty;
+            fillItem.Description = string.Empty;
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
-                CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
-
+                if (fillItem.Position % 1000 < 200) //Verifica se está na fila 1
+                {
+                    CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
+                    if (CurrentCargo.Length > 2300)
+                    {
+                        fillItem.Mode = "Topo";
+                    }
+                    else
+                    {
+                        fillItem.Mode = "Lado";
+                    }
+                }
+                else    //Verifica se está na fila 2 ou 3
+                {
+                    if (fillItem.Position < 2000)   //Verifica se está no andar de baixo
+                    {
+                    CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillBot));
+                    }
+                    else    //Verifica se está no andar de cima
+                    {
+                    CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillTop));
+                    }
+                    if (CurrentCargo != null)
+                    {
+                        fillItem.Mode = "Topo";
+                    }
+                }
+                fillItem.Description = string.Concat(ProductName, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
+                
+                Cifra(); //Esta função trata de fazer print. Se não for possível, considerar adicionar propriedade
+                
+                // Adicionar novo item aqui
+                fillItem.Order += 1;
+                if (fillItem.Position >= 2300)
+                {
+                    fillItem.Position -= 1199;
+                }
+                else if (fillItem.Position >= 2000)
+                {
+                    fillItem.Position -= 900;
+                }
+                else if (fillItem.Position < 2000)
+                {
+                    fillItem.Position += 1000;
+                }
                 CurrentCargo.NumberOfPallets -= 1;
             }*/
         }
