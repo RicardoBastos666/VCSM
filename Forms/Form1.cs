@@ -451,9 +451,6 @@ namespace VCSM
             }
         }
 
-
-
-
         private void btnFinishOrder_Click(object sender, EventArgs e)
         {
             CargoList = CargoList.OrderByDescending(cargoItem => cargoItem.Length).ThenByDescending(cargoItem => cargoItem.Width).ToList();
