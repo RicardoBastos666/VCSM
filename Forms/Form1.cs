@@ -10,7 +10,6 @@ namespace VCSM
     public partial class Form1 : Form
     {
         private List<CargoItem> CargoList = new List<CargoItem>();
-        private List<FillItem> FillList = new List<FillItem>();
         //private bool userInteractedWithQuantity = false;
         //private int result;
 
@@ -460,19 +459,21 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
-            FillItem.Order = 1;
-            FillItem.Position = 1100;
+            // private List<FillItem> FillList = new List<FillItem>();
+            /*FillItem fillItem = new FillItem();            
+            fillItem.Order = 1;
+            fillItem.Position = 1100;
             if (cargoItem.Length > 2300)
-                FillItem.Mode = "Topo";
+                fillItem.Mode = "Topo";
             else
-                FillItem.Mode = "Lado";
-            FillItem.Description = string.Concat(ProductName, " ", cargoItem.Length.ToString(), "x", cargoItem.Width.ToString(), "x", cargoItem.Thickness.ToString());
+                fillItem.Mode = "Lado";
+            fillItem.Description = string.Concat(ProductName, " ", cargoItem.Length.ToString(), "x", cargoItem.Width.ToString(), "x", cargoItem.Thickness.ToString());
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
-                CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NP > 0);
+                CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
 
                 CurrentCargo.NumberOfPallets -= 1;
-            }
+            }*/
         }
 
         private void btnGenerateTestData_Click(object sender, EventArgs e)
