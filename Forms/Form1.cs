@@ -461,7 +461,7 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
-            FillItem.Order = 0;
+            FillItem.Order = 1;
             FillItem.Position = 1100;
             if (cargoItem.Length > 2300)
                 FillItem.Mode = "Topo";
@@ -470,7 +470,9 @@ namespace VCSM
             FillItem.Description = string.Concat(ProductName, " ", cargoItem.Length.ToString(), "x", cargoItem.Width.ToString(), "x", cargoItem.Thickness.ToString());
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
+                CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NP > 0);
 
+                CurrentCargo.NumberOfPallets -= 1;
             }
         }
     }
