@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 using VCSM.Data;
 
@@ -459,17 +460,20 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
+            /*
+            // WIP
             // private List<FillItem> FillList = new List<FillItem>();
-            /*FillItem fillItem = new FillItem();            
+            FillItem fillItem = new FillItem();            
             fillItem.Order = 1;
             fillItem.Position = 1100;
             fillItem.Mode = string.Empty;
             fillItem.Description = string.Empty;
+            CargoItem CurrentCargo = null;
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
                 if (fillItem.Position % 1000 < 200) //Verifica se está na fila 1
                 {
-                    CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
                     if (CurrentCargo.Length > 2300)
                     {
                         fillItem.Mode = "Topo";
@@ -483,11 +487,11 @@ namespace VCSM
                 {
                     if (fillItem.Position < 2000)   //Verifica se está no andar de baixo
                     {
-                    CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillBot));
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillBot));
                     }
                     else    //Verifica se está no andar de cima
                     {
-                    CargoItem CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillTop));
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillTop));
                     }
                     if (CurrentCargo != null)
                     {
@@ -495,10 +499,33 @@ namespace VCSM
                     }
                 }
                 fillItem.Description = string.Concat(ProductName, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
-                
-                Cifra(); //Esta função trata de fazer print. Se não for possível, considerar adicionar propriedade
-                
-                // Adicionar novo item aqui
+
+                // Adicionar novo item aqui (FillSettings)
+
+                //Cifra(fillItem.Position); //Esta função trata de fazer print. Se não for possível, considerar adicionar propriedade
+                //if (fillItem.Position / 1000 == 2)
+                //{
+                //    P[0] = "T";
+                //}
+                //else
+                //{
+                //    P[0] = "B";
+                //}
+                //P[1] = " ";
+                //if ((fillItem.Position / 100) % 10 == 1)
+                //{
+                //    P[2a4] = "DIR";
+                //}
+                //else if ((fillItem.Position / 100) % 10 == 2)
+                //{
+                //    P[2a4] = "MID";
+                //}
+                //else
+                //{
+                //    P[2a4] = "ESQ";
+                //}
+                //P[7a8] = itoa(fillItem.Position % 100);
+
                 fillItem.Order += 1;
                 if (fillItem.Position >= 2300)
                 {
