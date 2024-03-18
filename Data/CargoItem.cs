@@ -49,7 +49,6 @@ namespace VCSM.Data
                 }
                 else
                 {
-                    // Handle other thickness values (return 0 or show a warning)
                     MessageBox.Show($"An error ocurred. Thickness value of {Thickness} is invalid");
                     return 0;
                 }
@@ -62,7 +61,6 @@ namespace VCSM.Data
         {
             get
             {
-                // Calculate the total weight based on your logic
                 double weightPerSquareMeter;
 
                 if (Data.CargoData.MaterialWeights.ContainsKey(Product) &&
@@ -74,8 +72,7 @@ namespace VCSM.Data
                 {
                     // Handle the case where the product or thickness is not found
                     Console.WriteLine($"Warning: Product {Product} with thickness {Thickness} not found. Using default weight.");
-                    // You may want to provide a default value or raise an exception based on your application's requirements
-                    weightPerSquareMeter = 0; // Set a default value, replace this with your logic
+                    weightPerSquareMeter = 0; 
                 }
 
                 double totalArea = Width * Length * Quantity / 1_000_000.0; // Keep the dimensions in millimeters

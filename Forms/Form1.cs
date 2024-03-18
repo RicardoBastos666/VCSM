@@ -454,7 +454,10 @@ namespace VCSM
 
         private void btnFinishOrder_Click(object sender, EventArgs e)
         {
-            CargoList = CargoList.OrderByDescending(cargoItem => cargoItem.Length).ThenByDescending(cargoItem => cargoItem.Width).ToList();
+            CargoList = CargoList.
+                OrderByDescending(cargoItem => cargoItem.Length)
+                .ThenByDescending(cargoItem => cargoItem.Width)
+                .ToList();
             CargoList = CargoList
                 .OrderByDescending(cargoItem => cargoItem.Length >= 2300 ? 1 : 0) 
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
@@ -468,7 +471,8 @@ namespace VCSM
             fillItem.Position = 1100;
             fillItem.Mode = string.Empty;
             fillItem.Description = string.Empty;
-            CargoItem CurrentCargo = null;
+            //criar buffer para CargoList
+            CargoItem CurrentCargo = null; 
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
                 if (fillItem.Position % 1000 < 200) //Verifica se está na fila 1
@@ -493,12 +497,13 @@ namespace VCSM
                     {
                     CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillTop));
                     }
+                    // Falta condiçao se nao couber nenhum
                     if (CurrentCargo != null)
                     {
                         fillItem.Mode = "Topo";
                     }
                 }
-                fillItem.Description = string.Concat(ProductName, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
+                fillItem.Description = string.Concat(CurrentCargo.Product, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
 
                 // Adicionar novo item aqui (FillSettings)
 
@@ -542,7 +547,7 @@ namespace VCSM
                 CurrentCargo.NumberOfPallets -= 1;
             }*/
         }
-
+            
         private void btnGenerateTestData_Click(object sender, EventArgs e)
         {
             // Generate and add sample data to the CargoList
