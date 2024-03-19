@@ -463,7 +463,7 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
-            
+            /*
             // WIP
             // private List<FillItem> FillList = new List<FillItem>();
             FillItem fillItem = new FillItem();            
@@ -613,7 +613,7 @@ namespace VCSM
                 {
                     CurrentCargo.NumberOfPallets -= 1;
                 }
-            }
+            }*/
         }
             
         private void btnGenerateTestData_Click(object sender, EventArgs e)
