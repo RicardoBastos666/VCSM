@@ -465,7 +465,7 @@ namespace VCSM
 
 
             /*// WIP
-            List<FillItem> FillList = new List<FillItem>();
+            List<FillItem> FillList = new List<FillItem>(); //WIP! fillList não existe no contexto actual
             FillItem fillItem = new FillItem();            
             fillItem.Order = 1;
             fillItem.Position = 1100;
