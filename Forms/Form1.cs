@@ -463,7 +463,7 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
-            /*
+            
             // WIP
             // private List<FillItem> FillList = new List<FillItem>();
             FillItem fillItem = new FillItem();            
@@ -503,10 +503,13 @@ namespace VCSM
                         fillItem.Mode = "Topo";
                     }
                 }
-                fillItem.Description = string.Concat(CurrentCargo.Product, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
+                if (CurrentCargo != null)
+                {
+                    fillItem.Description = string.Concat(CurrentCargo.Product, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
+                }
 
-                // Adicionar novo item aqui (FillSettings)
-
+                //if (CurrentCargo != null)
+                //{
                 //Cifra(fillItem.Position); //Esta função trata de fazer print. Se não for possível, considerar adicionar propriedade
                 //if (fillItem.Position / 1000 == 2)
                 //{
@@ -529,9 +532,71 @@ namespace VCSM
                 //{
                 //    P[2a4] = "ESQ";
                 //}
-                //P[7a8] = itoa(fillItem.Position % 100);
+                //P[5] = " ";
+                //P[6a7] = itoa(fillItem.Position % 100);
+                //}
 
-                fillItem.Order += 1;
+                if (CurrentCargo != null)
+                {
+                    if (fillItem.Position < 2000)
+                    {
+                        if (fillItem.Position % 1000 < 200)
+                        {
+                            if (fillItem.Mode == "Topo")
+                            {
+                                LengthFillBot1 += CurrentCargo.EffLength;
+                                WidthFillBot = CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                            }
+                            else
+                            {
+                                LengthFillBot1 += CurrentCargo.EffWidth;
+                                WidthFillBot = 2300;
+                            }
+                        }
+                        else if (fillItem.Position % 1000 < 300)
+                        {
+                            LengthFillBot2 += CurrentCargo.EffLength;
+                            WidthFillBot += CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                        }
+                        else
+                        {
+                            LengthFillBot3 += CurrentCargo.EffLength;
+                            WidthFillBot = 2300;
+                        }
+                    }
+                    else
+                    {
+                        if (fillItem.Position % 1000 < 200)
+                        {
+                            if (fillItem.Mode == "Topo")
+                            {
+                                LengthFillTop1 += CurrentCargo.EffLength;
+                                WidthFillTop = CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                            }
+                            else
+                            {
+                                LengthFillTop1 += CurrentCargo.EffWidth;
+                                WidthFillTop = 2300;
+                            }
+                        }
+                        else if (fillItem.Position % 1000 < 300)
+                        {
+                            LengthFillTop2 += CurrentCargo.EffLength;
+                            WidthFillTop += CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                        }
+                        else
+                        {
+                            LengthFillTop3 += CurrentCargo.EffLength;
+                            WidthFillTop = 2300;
+                        }
+                    }
+                    // Add FillList.FillItem
+                }
+
+                if (CurrentCargo != null)
+                {
+                    fillItem.Order += 1;
+                }
                 if (fillItem.Position >= 2300)
                 {
                     fillItem.Position -= 1199;
@@ -544,8 +609,11 @@ namespace VCSM
                 {
                     fillItem.Position += 1000;
                 }
-                CurrentCargo.NumberOfPallets -= 1;
-            }*/
+                if (CurrentCargo != null)
+                {
+                    CurrentCargo.NumberOfPallets -= 1;
+                }
+            }
         }
             
         private void btnGenerateTestData_Click(object sender, EventArgs e)
