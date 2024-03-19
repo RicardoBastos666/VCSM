@@ -471,6 +471,15 @@ namespace VCSM
             fillItem.Position = 1100;
             fillItem.Mode = string.Empty;
             fillItem.Description = string.Empty;
+            fillItem.Cifra = string.Empty;
+            int LengthFillBot1 = 0;
+            int LengthFillBot2 = 0;
+            int LengthFillBot3 = 0;
+            int WidthFillBot = 0;
+            int LengthFillTop1 = 0;
+            int LengthFillTop2 = 0;
+            int LengthFillTop3 = 0;
+            int WidthFillTop = 0;
             //criar buffer para CargoList
             CargoItem CurrentCargo = null; 
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
@@ -508,33 +517,32 @@ namespace VCSM
                     fillItem.Description = string.Concat(CurrentCargo.Product, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
                 }
 
-                //if (CurrentCargo != null)
-                //{
-                //Cifra(fillItem.Position); //Esta função trata de fazer print. Se não for possível, considerar adicionar propriedade
-                //if (fillItem.Position / 1000 == 2)
-                //{
-                //    P[0] = "T";
-                //}
-                //else
-                //{
-                //    P[0] = "B";
-                //}
-                //P[1] = " ";
-                //if ((fillItem.Position / 100) % 10 == 1)
-                //{
-                //    P[2a4] = "DIR";
-                //}
-                //else if ((fillItem.Position / 100) % 10 == 2)
-                //{
-                //    P[2a4] = "MID";
-                //}
-                //else
-                //{
-                //    P[2a4] = "ESQ";
-                //}
-                //P[5] = " ";
-                //P[6a7] = itoa(fillItem.Position % 100);
-                //}
+                if (CurrentCargo != null)
+                {
+                    if (fillItem.Position / 1000 == 2)
+                    {
+                        fillItem.Cifra += "Topo";
+                    }
+                    else
+                    {
+                        fillItem.Cifra += "Baixo";
+                    }
+                    fillItem.Cifra += " ";
+                    if ((fillItem.Position / 100) % 10 == 1)
+                    {
+                        fillItem.Cifra += "DIR";
+                    }
+                    else if ((fillItem.Position / 100) % 10 == 2)
+                    {
+                        fillItem.Cifra += "MEIO";
+                    }
+                    else
+                    {
+                        fillItem.Cifra += "ESQ";
+                    }
+                    fillItem.Cifra += " ";
+                    fillItem.Cifra += (fillItem.Position % 100).ToString();
+                }
 
                 if (CurrentCargo != null)
                 {

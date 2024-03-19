@@ -10,6 +10,7 @@ namespace VCSM.Data
     {
         public int Order { get; set; }
         public int Position { get; set; }
+        public string Cifra { get; set; }
         public string Mode { get; set; }
         public string Description { get; set; }
     }
