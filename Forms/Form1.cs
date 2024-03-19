@@ -463,7 +463,7 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
-            
+
             /*// WIP
             List<FillItem> FillList = new List<FillItem>();
             FillItem fillItem = new FillItem();            
@@ -480,7 +480,7 @@ namespace VCSM
             int lengthFillTop2 = 0;
             int lengthFillTop3 = 0;
             int widthFillTop = 0;
-            //criar buffer para CargoList
+            //WIP! criar buffer para CargoList
             CargoItem CurrentCargo = null; 
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
@@ -626,7 +626,7 @@ namespace VCSM
             }
             fillList.Remove(fillItem); //WIP! Procurar mais robustez neste aspecto */
         }
-            
+
         private void btnGenerateTestData_Click(object sender, EventArgs e)
         {
             // Generate and add sample data to the CargoList
