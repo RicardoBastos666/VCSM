@@ -463,23 +463,23 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
-            /*
-            // WIP
-            // private List<FillItem> FillList = new List<FillItem>();
+            
+            /*// WIP
+            List<FillItem> FillList = new List<FillItem>();
             FillItem fillItem = new FillItem();            
             fillItem.Order = 1;
             fillItem.Position = 1100;
             fillItem.Mode = string.Empty;
             fillItem.Description = string.Empty;
             fillItem.Cifra = string.Empty;
-            int LengthFillBot1 = 0;
-            int LengthFillBot2 = 0;
-            int LengthFillBot3 = 0;
-            int WidthFillBot = 0;
-            int LengthFillTop1 = 0;
-            int LengthFillTop2 = 0;
-            int LengthFillTop3 = 0;
-            int WidthFillTop = 0;
+            int lengthFillBot1 = 0;
+            int lengthFillBot2 = 0;
+            int lengthFillBot3 = 0;
+            int widthFillBot = 0;
+            int lengthFillTop1 = 0;
+            int lengthFillTop2 = 0;
+            int lengthFillTop3 = 0;
+            int widthFillTop = 0;
             //criar buffer para CargoList
             CargoItem CurrentCargo = null; 
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
@@ -487,7 +487,7 @@ namespace VCSM
                 if (fillItem.Position % 1000 < 200) //Verifica se está na fila 1
                 {
                     CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
-                    if (CurrentCargo.Length > 2300)
+                    if (CurrentCargo.Length > 2300) //Uma vez que está na fila 1, determinar o Modo
                     {
                         fillItem.Mode = "Topo";
                     }
@@ -500,35 +500,34 @@ namespace VCSM
                 {
                     if (fillItem.Position < 2000)   //Verifica se está no andar de baixo
                     {
-                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillBot));
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - widthFillBot));
                     }
                     else    //Verifica se está no andar de cima
                     {
-                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - WidthFillTop));
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - widthFillTop));
                     }
-                    // Falta condiçao se nao couber nenhum
                     if (CurrentCargo != null)
                     {
                         fillItem.Mode = "Topo";
                     }
                 }
-                if (CurrentCargo != null)
+                if (CurrentCargo != null) //Descrição do material da palete
                 {
                     fillItem.Description = string.Concat(CurrentCargo.Product, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
                 }
 
                 if (CurrentCargo != null)
                 {
-                    if (fillItem.Position / 1000 == 2)
+                    if (fillItem.Position / 1000 == 2) // Posição: Andar do contentor
                     {
-                        fillItem.Cifra += "Topo";
+                        fillItem.Cifra += "Top";
                     }
                     else
                     {
-                        fillItem.Cifra += "Baixo";
+                        fillItem.Cifra += "Bottom";
                     }
                     fillItem.Cifra += " ";
-                    if ((fillItem.Position / 100) % 10 == 1)
+                    if ((fillItem.Position / 100) % 10 == 1) // Posição: Coluna de paletes
                     {
                         fillItem.Cifra += "DIR";
                     }
@@ -541,10 +540,10 @@ namespace VCSM
                         fillItem.Cifra += "ESQ";
                     }
                     fillItem.Cifra += " ";
-                    fillItem.Cifra += (fillItem.Position % 100).ToString();
+                    fillItem.Cifra += (fillItem.Position % 100).ToString(); // Posição: Fila actual
                 }
 
-                if (CurrentCargo != null)
+                if (CurrentCargo != null) // Determinação de espaço preenchido
                 {
                     if (fillItem.Position < 2000)
                     {
@@ -552,24 +551,24 @@ namespace VCSM
                         {
                             if (fillItem.Mode == "Topo")
                             {
-                                LengthFillBot1 += CurrentCargo.EffLength;
-                                WidthFillBot = CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                                lengthFillBot1 += CurrentCargo.EffLength;
+                                widthFillBot = CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
                             }
                             else
                             {
-                                LengthFillBot1 += CurrentCargo.EffWidth;
-                                WidthFillBot = 2300;
+                                lengthFillBot1 += CurrentCargo.EffWidth;
+                                widthFillBot = 2300;
                             }
                         }
                         else if (fillItem.Position % 1000 < 300)
                         {
-                            LengthFillBot2 += CurrentCargo.EffLength;
-                            WidthFillBot += CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                            lengthFillBot2 += CurrentCargo.EffLength;
+                            widthFillBot += CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
                         }
                         else
                         {
-                            LengthFillBot3 += CurrentCargo.EffLength;
-                            WidthFillBot = 2300;
+                            lengthFillBot3 += CurrentCargo.EffLength;
+                            widthFillBot = 2300;
                         }
                     }
                     else
@@ -578,34 +577,36 @@ namespace VCSM
                         {
                             if (fillItem.Mode == "Topo")
                             {
-                                LengthFillTop1 += CurrentCargo.EffLength;
-                                WidthFillTop = CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                                lengthFillTop1 += CurrentCargo.EffLength;
+                                widthFillTop = CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
                             }
                             else
                             {
-                                LengthFillTop1 += CurrentCargo.EffWidth;
-                                WidthFillTop = 2300;
+                                lengthFillTop1 += CurrentCargo.EffWidth;
+                                widthFillTop = 2300;
                             }
                         }
                         else if (fillItem.Position % 1000 < 300)
                         {
-                            LengthFillTop2 += CurrentCargo.EffLength;
-                            WidthFillTop += CurrentCargo.EffWidth + 20; //Confirmar se é 20 ou 30
+                            lengthFillTop2 += CurrentCargo.EffLength;
+                            widthFillTop += CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
                         }
                         else
                         {
-                            LengthFillTop3 += CurrentCargo.EffLength;
-                            WidthFillTop = 2300;
+                            lengthFillTop3 += CurrentCargo.EffLength;
+                            widthFillTop = 2300;
                         }
                     }
-                    // Add FillList.FillItem
+                    FillList.Add(fillItem); // Passa para o item seguinte
+                    fillItem = new FillItem();
                 }
 
-                if (CurrentCargo != null)
+                if (CurrentCargo != null) // Preenche Ordem do próximo Item
                 {
                     fillItem.Order += 1;
                 }
-                if (fillItem.Position >= 2300)
+
+                if (fillItem.Position >= 2300) // Preenche Posição do próximo Item
                 {
                     fillItem.Position -= 1199;
                 }
@@ -617,11 +618,13 @@ namespace VCSM
                 {
                     fillItem.Position += 1000;
                 }
-                if (CurrentCargo != null)
+
+                if (CurrentCargo != null) // Retira uma palete correspondente da lista de entrada
                 {
                     CurrentCargo.NumberOfPallets -= 1;
                 }
-            }*/
+            }
+            fillList.Remove(fillItem); //WIP! Procurar mais robustez neste aspecto */
         }
             
         private void btnGenerateTestData_Click(object sender, EventArgs e)
