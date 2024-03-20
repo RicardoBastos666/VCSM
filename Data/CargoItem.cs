@@ -14,15 +14,7 @@ namespace VCSM.Data
         { 
             get
             {
-                //calc EffWidth based on documentation logic 
-                if (Width < 2299)
-                {
-                    return Width + 10;
-                }
-                else 
-                {
-                    return Width + 40;
-                }
+                return Width + 10;
             } 
         }
         public int Length { get; set; }
