@@ -466,8 +466,7 @@ namespace VCSM
                 .ToList();
 
 
-            /* // WIP
-            // private List<FillItem> FillList = new List<FillItem>(); WIP! Confirmar que FillList foi devidamente declarada (linha 17)
+            // WIP
             FillItem fillItem = new FillItem();            
             fillItem.Order = 1;
             fillItem.Position = 1100;
@@ -554,7 +553,7 @@ namespace VCSM
                             if (fillItem.Mode == "Topo")
                             {
                                 lengthFillBot1 += CurrentCargo.EffLength;
-                                widthFillBot = CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
+                                widthFillBot = CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo 
                             }
                             else
                             {
@@ -565,7 +564,7 @@ namespace VCSM
                         else if (fillItem.Position % 1000 < 300)
                         {
                             lengthFillBot2 += CurrentCargo.EffLength;
-                            widthFillBot += CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
+                            widthFillBot += CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo
                         }
                         else
                         {
@@ -580,7 +579,7 @@ namespace VCSM
                             if (fillItem.Mode == "Topo")
                             {
                                 lengthFillTop1 += CurrentCargo.EffLength;
-                                widthFillTop = CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
+                                widthFillTop = CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo
                             }
                             else
                             {
@@ -591,7 +590,7 @@ namespace VCSM
                         else if (fillItem.Position % 1000 < 300)
                         {
                             lengthFillTop2 += CurrentCargo.EffLength;
-                            widthFillTop += CurrentCargo.EffWidth + 20; //WIP! Confirmar se é 20 ou 30
+                            widthFillTop += CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo
                         }
                         else
                         {
@@ -605,28 +604,28 @@ namespace VCSM
 
                 if (CurrentCargo != null) // Preenche Ordem do próximo Item
                 {
-                    fillItem.Order += 1;
+                    fillItem.Order += 1; //WIP Mais robustez aqui
                 }
 
                 if (fillItem.Position >= 2300) // Preenche Posição do próximo Item
                 {
-                    fillItem.Position -= 1199;
+                    fillItem.Position -= 1199; //WIP Mais robustez aqui
                 }
                 else if (fillItem.Position >= 2000)
                 {
-                    fillItem.Position -= 900;
+                    fillItem.Position -= 900; //WIP Mais robustez aqui
                 }
                 else if (fillItem.Position < 2000)
                 {
-                    fillItem.Position += 1000;
+                    fillItem.Position += 1000; //WIP Mais robustez aqui
                 }
 
                 if (CurrentCargo != null) // Retira uma palete correspondente da lista de entrada
                 {
-                    CurrentCargo.NumberOfPallets -= 1; //WIP! Criação de buffer para CargoList
+                    CurrentCargo.NumberOfPallets -= 1; //WIP! criar buffer para CargoList
                 }
             }
-            FillList.Remove(fillItem); //WIP! criar buffer para CargoList */
+            FillList.Remove(fillItem); //WIP! analisar soluções com melhor robustez */
         }
 
         private void btnGenerateTestData_Click(object sender, EventArgs e)
