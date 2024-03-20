@@ -14,6 +14,8 @@ namespace VCSM
         //private bool userInteractedWithQuantity = false;
         //private int result;
 
+        private List<FillItem> FillList = new List<FillItem>();
+
         public Form1()
         {
             InitializeComponent();
@@ -464,8 +466,8 @@ namespace VCSM
                 .ToList();
 
 
-            /*// WIP
-            List<FillItem> FillList = new List<FillItem>(); //WIP! fillList não existe no contexto actual
+            /* // WIP
+            // private List<FillItem> FillList = new List<FillItem>(); WIP! Confirmar que FillList foi devidamente declarada (linha 17)
             FillItem fillItem = new FillItem();            
             fillItem.Order = 1;
             fillItem.Position = 1100;
@@ -621,10 +623,10 @@ namespace VCSM
 
                 if (CurrentCargo != null) // Retira uma palete correspondente da lista de entrada
                 {
-                    CurrentCargo.NumberOfPallets -= 1;
+                    CurrentCargo.NumberOfPallets -= 1; //WIP! Criação de buffer para CargoList
                 }
             }
-            fillList.Remove(fillItem); //WIP! Procurar mais robustez neste aspecto */
+            FillList.Remove(fillItem); //WIP! criar buffer para CargoList */
         }
 
         private void btnGenerateTestData_Click(object sender, EventArgs e)
