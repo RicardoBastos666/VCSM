@@ -466,10 +466,10 @@ namespace VCSM
                 .ToList();
 
 
-            /*// WIP
-            FillItem fillItem = new FillItem();            
-            fillItem.Order = 1;
-            fillItem.Position = 1100;
+            /* // WIP
+            FillItem fillItem = new FillItem();
+            int buffOrder = 1;
+            int buffPosition = 1100;
             fillItem.Mode = string.Empty;
             fillItem.Description = string.Empty;
             fillItem.Cifra = string.Empty;
@@ -485,6 +485,8 @@ namespace VCSM
             CargoItem CurrentCargo = null; 
             while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
             {
+                fillItem.Order = buffOrder;
+                fillItem.Position = buffPosition;
                 if (fillItem.Position % 1000 < 200) //Verifica se está na fila 1
                 {
                     CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
@@ -604,28 +606,33 @@ namespace VCSM
 
                 if (CurrentCargo != null) // Preenche Ordem do próximo Item
                 {
-                    fillItem.Order += 1; //WIP Mais robustez aqui
+                    buffOrder = fillItem.Order + 1;
                 }
 
                 if (fillItem.Position >= 2300) // Preenche Posição do próximo Item
                 {
-                    fillItem.Position -= 1199; //WIP Mais robustez aqui
+                    buffPosition = fillItem.Position - 1199;
                 }
                 else if (fillItem.Position >= 2000)
                 {
-                    fillItem.Position -= 900; //WIP Mais robustez aqui
+                    buffPosition = fillItem.Position - 900;
                 }
                 else if (fillItem.Position < 2000)
                 {
-                    fillItem.Position += 1000; //WIP Mais robustez aqui
+                    buffPosition = fillItem.Position + 1000;
                 }
 
                 if (CurrentCargo != null) // Retira uma palete correspondente da lista de entrada
                 {
                     CurrentCargo.NumberOfPallets -= 1; //WIP! criar buffer para CargoList
+                    if (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
+                    {
+                        FillList.Add(fillItem); // Passa para o item seguinte
+                        fillItem = new FillItem();
+                    }
                 }
             }
-            FillList.Remove(fillItem); //WIP! analisar soluções com melhor robustez */
+            //Aqui termina o comentário */
         }
 
         private void btnGenerateTestData_Click(object sender, EventArgs e)
