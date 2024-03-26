@@ -490,10 +490,10 @@ namespace VCSM
             {
                 fillItem.Order = buffOrder;
                 fillItem.Position = buffPosition;
-                if (fillItem.Position % 1000 < 200) //Verifica se está na fila 1
+                if (fillItem.Position % 1000 < 200) //If currently in Column 1
                 {
                     CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NPFinal > 0);
-                    if (CurrentCargo.Length > 2300) //Uma vez que está na fila 1, determinar o Modo
+                    if (CurrentCargo.Length > 2300) //In Column 1, determine the Mode
                     {
                         fillItem.Mode = "Topo";
                     }
@@ -502,13 +502,13 @@ namespace VCSM
                         fillItem.Mode = "Lado";
                     }
                 }
-                else    //Verifica se está na fila 2 ou 3
+                else    //If currently in Column 2 or 3
                 {
-                    if (fillItem.Position < 2000)   //Verifica se está no andar de baixo
+                    if (fillItem.Position < 2000)   //If currently on bottom floor
                     {
                     CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NPFinal > 0 && cargoItem.EffWidth < (2300 - widthFillBot));
                     }
-                    else    //Verifica se está no andar de cima
+                    else    //If currently on top floor
                     {
                     CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NPFinal > 0 && cargoItem.EffWidth < (2300 - widthFillTop));
                     }
@@ -517,14 +517,14 @@ namespace VCSM
                         fillItem.Mode = "Topo";
                     }
                 }
-                if (CurrentCargo != null) //Descrição do material da palete
+                if (CurrentCargo != null) //Description of current pallet
                 {
                     fillItem.Description = string.Concat(CurrentCargo.Product, " ", CurrentCargo.Length.ToString(), "x", CurrentCargo.Width.ToString(), "x", CurrentCargo.Thickness.ToString());
                 }
 
                 if (CurrentCargo != null)
                 {
-                    if (fillItem.Position / 1000 == 2) // Posição: Andar do contentor
+                    if (fillItem.Position / 1000 == 2) // Position: Container floor
                     {
                         fillItem.Cifra += "Top";
                     }
@@ -533,7 +533,7 @@ namespace VCSM
                         fillItem.Cifra += "Bottom";
                     }
                     fillItem.Cifra += " ";
-                    if ((fillItem.Position / 100) % 10 == 1) // Posição: Coluna de paletes
+                    if ((fillItem.Position / 100) % 10 == 1) // Position: Pallet column
                     {
                         fillItem.Cifra += "DIR";
                     }
@@ -546,10 +546,10 @@ namespace VCSM
                         fillItem.Cifra += "ESQ";
                     }
                     fillItem.Cifra += " ";
-                    fillItem.Cifra += (fillItem.Position % 100).ToString(); // Posição: Fila actual
+                    fillItem.Cifra += (fillItem.Position % 100).ToString(); // Position: Current row
                 }
 
-                if (CurrentCargo != null) // Determinação de espaço preenchido
+                if (CurrentCargo != null) // Determine filled space
                 {
                     if (fillItem.Position < 2000)
                     {
@@ -558,7 +558,7 @@ namespace VCSM
                             if (fillItem.Mode == "Topo")
                             {
                                 lengthFillBot1 += CurrentCargo.EffLength;
-                                widthFillBot = CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo 
+                                widthFillBot = CurrentCargo.EffWidth + 30; // Effective width is larger when in "Topo" mode 
                             }
                             else
                             {
@@ -569,7 +569,7 @@ namespace VCSM
                         else if (fillItem.Position % 1000 < 300)
                         {
                             lengthFillBot2 += CurrentCargo.EffLength;
-                            widthFillBot += CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo
+                            widthFillBot += CurrentCargo.EffWidth + 30; // Effective width is larger when in "Topo" mode
                         }
                         else
                         {
@@ -584,7 +584,7 @@ namespace VCSM
                             if (fillItem.Mode == "Topo")
                             {
                                 lengthFillTop1 += CurrentCargo.EffLength;
-                                widthFillTop = CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo
+                                widthFillTop = CurrentCargo.EffWidth + 30; // Effective width is larger when in "Topo" mode
                             }
                             else
                             {
@@ -595,7 +595,7 @@ namespace VCSM
                         else if (fillItem.Position % 1000 < 300)
                         {
                             lengthFillTop2 += CurrentCargo.EffLength;
-                            widthFillTop += CurrentCargo.EffWidth + 30; // Largura efectiva é maior para paletes entrando de topo
+                            widthFillTop += CurrentCargo.EffWidth + 30; // Effective width is larger when in "Topo" mode
                         }
                         else
                         {
@@ -603,16 +603,14 @@ namespace VCSM
                             widthFillTop = 2300;
                         }
                     }
-                    FillList.Add(fillItem); // Passa para o item seguinte
-                    fillItem = new FillItem();
                 }
 
-                if (CurrentCargo != null) // Preenche Ordem do próximo Item
+                if (CurrentCargo != null) // Order for the next item
                 {
                     buffOrder = fillItem.Order + 1;
                 }
 
-                if (fillItem.Position >= 2300) // Preenche Posição do próximo Item
+                if (fillItem.Position >= 2300) // Position for the next item
                 {
                     buffPosition = fillItem.Position - 1199;
                 }
@@ -625,17 +623,17 @@ namespace VCSM
                     buffPosition = fillItem.Position + 1000;
                 }
 
-                if (CurrentCargo != null) // Retira uma palete correspondente da lista de entrada
+                if (CurrentCargo != null) // Removes corresponding pallet from input list
                 {
                     CurrentCargo.NPFinal -= 1;
                     if (CargoList.Sum(CargoItem => CargoItem.NPFinal) > 0)
                     {
-                        FillList.Add(fillItem); // Passa para o item seguinte
-                        fillItem = new FillItem();
+                        FillList.Add(fillItem); // Create next item
+                        fillItem = new FillItem(); // Move on to the next item
                     }
                 }
             }
-            //Aqui termina o comentário */
+            // EndComment */
         }
 
         private void btnGenerateTestData_Click(object sender, EventArgs e)
