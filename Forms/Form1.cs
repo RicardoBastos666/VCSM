@@ -456,6 +456,10 @@ namespace VCSM
 
         private void btnFinishOrder_Click(object sender, EventArgs e)
         {
+            foreach (CargoItem cargoItem in CargoList) //WIP. Creates writable values for each pallet number. Testar.
+            {
+                cargoItem.NPFinal = cargoItem.NumberOfPallets;
+            }
             CargoList = CargoList.
                 OrderByDescending(cargoItem => cargoItem.Length)
                 .ThenByDescending(cargoItem => cargoItem.Width)
@@ -481,15 +485,14 @@ namespace VCSM
             int lengthFillTop2 = 0;
             int lengthFillTop3 = 0;
             int widthFillTop = 0;
-            //WIP! criar buffer para CargoList
             CargoItem CurrentCargo = null; 
-            while (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
+            while (CargoList.Sum(CargoItem => CargoItem.NPFinal) > 0)
             {
                 fillItem.Order = buffOrder;
                 fillItem.Position = buffPosition;
                 if (fillItem.Position % 1000 < 200) //Verifica se está na fila 1
                 {
-                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0);
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NPFinal > 0);
                     if (CurrentCargo.Length > 2300) //Uma vez que está na fila 1, determinar o Modo
                     {
                         fillItem.Mode = "Topo";
@@ -503,11 +506,11 @@ namespace VCSM
                 {
                     if (fillItem.Position < 2000)   //Verifica se está no andar de baixo
                     {
-                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - widthFillBot));
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NPFinal > 0 && cargoItem.EffWidth < (2300 - widthFillBot));
                     }
                     else    //Verifica se está no andar de cima
                     {
-                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NumberOfPallets > 0 && cargoItem.EffWidth < (2300 - widthFillTop));
+                    CurrentCargo = CargoList.FirstOrDefault(cargoItem => cargoItem.NPFinal > 0 && cargoItem.EffWidth < (2300 - widthFillTop));
                     }
                     if (CurrentCargo != null)
                     {
@@ -624,8 +627,8 @@ namespace VCSM
 
                 if (CurrentCargo != null) // Retira uma palete correspondente da lista de entrada
                 {
-                    CurrentCargo.NumberOfPallets -= 1; //WIP! criar buffer para CargoList
-                    if (CargoList.Sum(CargoItem => CargoItem.NumberOfPallets) > 0)
+                    CurrentCargo.NPFinal -= 1;
+                    if (CargoList.Sum(CargoItem => CargoItem.NPFinal) > 0)
                     {
                         FillList.Add(fillItem); // Passa para o item seguinte
                         fillItem = new FillItem();

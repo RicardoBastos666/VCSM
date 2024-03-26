@@ -72,5 +72,6 @@ namespace VCSM.Data
                 return totalArea * weightPerSquareMeter;
             }
         }
+        public int NPFinal { get; set; }
     }
 }
