@@ -469,14 +469,13 @@ namespace VCSM
                 .ThenByDescending(cargoItem => cargoItem.Length < 2300 ? cargoItem.Width : int.MaxValue)
                 .ToList();
 
-
-            /* // WIP
             FillItem fillItem = new FillItem();
             int buffOrder = 1;
             int buffPosition = 1100;
             fillItem.Mode = string.Empty;
             fillItem.Description = string.Empty;
             fillItem.Cifra = string.Empty;
+            // WIP Adicionar limites de comprimento
             int lengthFillBot1 = 0;
             int lengthFillBot2 = 0;
             int lengthFillBot3 = 0;
@@ -530,12 +529,12 @@ namespace VCSM
                     }
                     else
                     {
-                        fillItem.Cifra += "Bottom";
+                        fillItem.Cifra += "Bot";
                     }
                     fillItem.Cifra += " ";
                     if ((fillItem.Position / 100) % 10 == 1) // Position: Pallet column
                     {
-                        fillItem.Cifra += "DIR";
+                        fillItem.Cifra += "DIR ";
                     }
                     else if ((fillItem.Position / 100) % 10 == 2)
                     {
@@ -543,10 +542,10 @@ namespace VCSM
                     }
                     else
                     {
-                        fillItem.Cifra += "ESQ";
+                        fillItem.Cifra += "ESQ ";
                     }
                     fillItem.Cifra += " ";
-                    fillItem.Cifra += (fillItem.Position % 100).ToString(); // Position: Current row
+                    fillItem.Cifra += (fillItem.Position % 100).ToString("00"); // Position: Current row
                 }
 
                 if (CurrentCargo != null) // Determine filled space
@@ -633,7 +632,6 @@ namespace VCSM
                     }
                 }
             }
-            // EndComment */
         }
 
         private void btnGenerateTestData_Click(object sender, EventArgs e)
@@ -647,7 +645,7 @@ namespace VCSM
                 Thickness = 35,
                 Width = 900,
                 Length = 2350,
-                Quantity = 28,
+                Quantity = 56,
             });
             CargoList.Add(new CargoItem
             {
@@ -677,7 +675,7 @@ namespace VCSM
                 Thickness = 35,
                 Width = 1220,
                 Length = 2100,
-                Quantity = 28,
+                Quantity = 56,
             });
             CargoList.Add(new CargoItem
             {
