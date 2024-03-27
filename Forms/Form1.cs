@@ -475,7 +475,8 @@ namespace VCSM
             fillItem.Mode = string.Empty;
             fillItem.Description = string.Empty;
             fillItem.Cifra = string.Empty;
-            // WIP Adicionar limites de comprimento
+            // WIP Adicionar limites de comprimento fillData.ContainerLength = 11850 ; FillLength2 e 3 não devem ultrapassar 1?
+            // WIP Reexaminar cálculo de LengthFill3
             int lengthFillBot1 = 0;
             int lengthFillBot2 = 0;
             int lengthFillBot3 = 0;
@@ -632,6 +633,8 @@ namespace VCSM
                     }
                 }
             }
+            // WIP Publicar resultados
+            // WIP Apagar FillList após publicar resultados
         }
 
         private void btnGenerateTestData_Click(object sender, EventArgs e)
